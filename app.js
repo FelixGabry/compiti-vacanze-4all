@@ -82,15 +82,56 @@ let view = "compiti";
 let filter = "all";
 let query = "";
 let openSubject = "it";
+const openReqs = new Set();
 
-function taskVisible(task) {
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[ch]));
+}
+
+function reqHtml(id, text, who) {
+  if (!text) return "";
+  const open = openReqs.has(id) ? " open" : "";
+  const label = who ? "Cosa chiede " + who : "Cosa chiede il prof";
+  return `<details class="req"${open} data-req="${esc(id)}">
+    <summary>${esc(label)}</summary>
+    <div class="req-body">${esc(text).replace(/\n/g, "<br>")}</div>
+  </details>`;
+}
+
+function bindReqs(root) {
+  root.querySelectorAll("details.req").forEach((d) => {
+    d.addEventListener("toggle", () => {
+      const id = d.dataset.req;
+      if (d.open) openReqs.add(id);
+      else openReqs.delete(id);
+    });
+  });
+}
+
+function taskBlob(task) {
+  const parts = [task.title, task.hint, task.req, task.who];
+  (task.children || []).forEach((c) => parts.push(c.title, c.req));
+  return parts.filter(Boolean).join(" ").toLowerCase();
+}
+
+function subjectBlob(sub) {
+  return [sub.name, sub.teacher, sub.ask, sub.blurb, sub.points].filter(Boolean).join(" ").toLowerCase();
+}
+
+function taskVisible(task, sub) {
   if (task.optional && !state.showOptional && !isDone(task.id)) return false;
   const complete = isComplete(task);
   if (filter === "todo" && complete) return false;
   if (filter === "done" && !complete) return false;
   if (!query) return true;
-  const blob = (task.title + " " + (task.hint || "") + " " + (task.children || []).map((c) => c.title).join(" ")).toLowerCase();
-  return blob.includes(query);
+  if (subjectBlob(sub).includes(query)) return true;
+  return taskBlob(task).includes(query);
 }
 
 function renderProgress() {
@@ -107,7 +148,7 @@ function renderCompiti() {
   const box = document.getElementById("compiti");
   box.innerHTML = "";
   DATA.subjects.forEach((sub) => {
-    const tasks = sub.tasks.filter(taskVisible);
+    const tasks = sub.tasks.filter((t) => taskVisible(t, sub));
     if (!tasks.length && query) return;
     const el = document.createElement("section");
     el.className = "subject";
@@ -117,16 +158,23 @@ function renderCompiti() {
       <button class="subject-h" data-open="${sub.id}">
         <span class="dot"></span>
         <div>
-          <h2>${sub.name}</h2>
-          <p class="blurb">${sub.blurb}</p>
-          <div class="count">${doneN}/${leaf.length} punti</div>
+          <h2>${esc(sub.name)}</h2>
+          ${sub.teacher ? `<p class="teacher">${esc(sub.teacher)}</p>` : ""}
+          <p class="blurb">${esc(sub.blurb)}</p>
+          <div class="count">${doneN}/${leaf.length} punti${sub.points ? " · " + esc(sub.points) : ""}</div>
         </div>
-        <span class="due">${sub.due}</span>
+        <span class="due">${esc(sub.due)}</span>
       </button>
       <div class="body ${openSubject === sub.id ? "" : "hidden"}"></div>
     `;
     const body = el.querySelector(".body");
-    tasks.forEach((task) => body.appendChild(renderTask(task)));
+    if (sub.ask) {
+      const ask = document.createElement("div");
+      ask.className = "ask";
+      ask.innerHTML = `<div class="ask-kicker">Richiesta complessiva</div>${esc(sub.ask).replace(/\n/g, "<br>")}`;
+      body.appendChild(ask);
+    }
+    tasks.forEach((task) => body.appendChild(renderTask(task, sub)));
     el.querySelector("[data-open]").addEventListener("click", () => {
       openSubject = openSubject === sub.id ? "" : sub.id;
       render();
@@ -138,29 +186,34 @@ function renderCompiti() {
   }
 }
 
-function renderTask(task) {
+function renderTask(task, sub) {
   const wrap = document.createElement("div");
   wrap.className = "task" + (isComplete(task) ? " done" : "");
   const kids = task.children
     ? `<div class="children">${task.children.map((c) => `
-        <label class="child">
-          <input class="check" type="checkbox" data-id="${c.id}" ${isDone(c.id) ? "checked" : ""}>
-          <span>${c.title}</span>
-        </label>`).join("")}</div>`
+        <div class="child">
+          <label class="child-row">
+            <input class="check" type="checkbox" data-id="${c.id}" ${isDone(c.id) ? "checked" : ""}>
+            <span>${esc(c.title)}</span>
+          </label>
+          ${reqHtml(c.id, c.req, c.who || task.who || sub.who)}
+        </div>`).join("")}</div>`
     : "";
   const prog = parentProgress(task);
   wrap.innerHTML = `
     <div class="task-row">
       <input class="check" type="checkbox" data-id="${task.id}" ${isComplete(task) ? "checked" : ""}>
       <div>
-        <div class="title">${task.title}${task.optional ? '<span class="badge">facoltativo</span>' : ""}${prog ? ' · ' + prog : ""}</div>
-        ${task.hint ? `<div class="hint">${task.hint}</div>` : ""}
-        ${task.href ? `<a class="link" href="${task.href}" target="_blank" rel="noopener">Apri link</a>` : ""}
+        <div class="title">${esc(task.title)}${task.optional ? '<span class="badge">facoltativo</span>' : ""}${prog ? " · " + prog : ""}</div>
+        ${task.hint ? `<div class="hint">${esc(task.hint)}</div>` : ""}
+        ${reqHtml(task.id, task.req, task.who || sub.who)}
+        ${task.href ? `<a class="link" href="${esc(task.href)}" target="_blank" rel="noopener">Apri link</a>` : ""}
         ${kids}
-        <textarea class="note" data-note="${task.id}" placeholder="Nota su questo punto…">${state.notes[task.id] || ""}</textarea>
+        <textarea class="note" data-note="${task.id}" placeholder="Nota su questo punto…">${esc(state.notes[task.id] || "")}</textarea>
       </div>
     </div>
   `;
+  bindReqs(wrap);
   wrap.querySelectorAll("input.check").forEach((inp) => {
     inp.addEventListener("change", () => {
       const t = findTask(inp.dataset.id);

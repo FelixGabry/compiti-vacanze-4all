@@ -112,7 +112,59 @@ h1 {
   font-size: 18px;
   margin: 0;
 }
+.teacher {
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--accent);
+  margin: 3px 0 0;
+}
 .blurb { font-size: 13px; color: var(--muted); margin: 3px 0 0; }
+.ask {
+  margin: 0 12px 12px;
+  padding: 12px 14px;
+  background: #eef3f8;
+  border: 1px solid #d5e0ec;
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.ask-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.req {
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f7f3ea;
+}
+.req summary {
+  padding: 9px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+}
+.req summary::-webkit-details-marker { display: none; }
+.req summary::before { content: "▸ "; }
+.req[open] summary::before { content: "▾ "; }
+.req-body {
+  padding: 0 12px 12px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.child-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
 .due {
   margin-left: auto;
   font-size: 11px;
@@ -188,15 +240,14 @@ h1 {
   background: #faf7f1;
   color: var(--ink);
 }
-.children { margin: 0 0 6px 32px; }
+.children { margin: 0 0 6px 0; }
 .child {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  padding: 6px 0;
+  padding: 8px 0;
   font-size: 13.5px;
+  border-top: 1px dashed var(--line);
 }
-.child .check { width: 18px; height: 18px; }
+.child .check { width: 18px; height: 18px; flex: none; margin-top: 1px; }
+.child .req { margin-left: 26px; }
 
 .panel { display: none; padding-top: 8px; }
 .panel.show { display: block; }
