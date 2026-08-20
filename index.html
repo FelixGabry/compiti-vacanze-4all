@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Compiti">
+  <title>Compiti delle vacanze — 4ALL</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div class="kicker">4ALL linguistico · estate 2026</div>
+      <h1>Compiti delle vacanze</h1>
+      <div class="progress-row">
+        <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
+          <circle class="bg" cx="22" cy="22" r="18"></circle>
+          <circle class="fg" id="ring-fg" cx="22" cy="22" r="18" transform="rotate(-90 22 22)"></circle>
+        </svg>
+        <div class="prog-meta">
+          <div><strong id="prog-num">0 / 0</strong> spuntati</div>
+          <div id="prog-pct">0% · i dati restano su questo telefono</div>
+        </div>
+      </div>
+      <div id="search-wrap">
+        <input class="search" id="q" type="search" placeholder="Cerca un compito…" enterkeyhint="search">
+        <div class="filters">
+          <button class="chip on" data-filter="all" type="button">Tutti</button>
+          <button class="chip" data-filter="todo" type="button">Da fare</button>
+          <button class="chip" data-filter="done" type="button">Fatti</button>
+          <button class="chip" id="opt" type="button">Facoltativi</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="compiti-panel" class="panel show">
+      <div id="compiti"></div>
+    </div>
+
+    <div id="char-panel" class="panel">
+      <p class="cal-help">
+        Zu: <strong>2 righe di caratteri al giorno</strong> dall’ultimo giorno con firma sul quaderno fino al <strong>12 settembre</strong>.
+        Metti la data della firma: il calendario parte dal giorno dopo. Tocca un giorno quando hai scritto le 2 righe.
+      </p>
+      <label class="field" for="firma">Data dell’ultima firma della Zu</label>
+      <input id="firma" type="date" min="2026-03-01" max="2026-09-12">
+      <p class="stats" id="char-stats"></p>
+      <div class="cal" id="cal"></div>
+    </div>
+
+    <div id="note-panel" class="panel">
+      <p class="cal-help">Diario libero: dove sei arrivato, cosa manca, dubbi. Si salva da solo su questo telefono.</p>
+      <textarea class="journal" id="journal" placeholder="Es. Oggi letto 40 pagine di Pirandello. Domani 面子 in cuffia…"></textarea>
+      <div class="btn-row">
+        <button class="btn" id="copy" type="button">Copia backup</button>
+        <button class="btn ghost" id="download" type="button">Scarica JSON</button>
+        <label class="btn ghost" for="restore">Ripristina file</label>
+        <input id="restore" type="file" accept="application/json" hidden>
+      </div>
+      <p class="cal-help">
+        Le spunte stanno in questo browser. Se cambi telefono: <strong>Copia backup</strong> e incollalo da qualche parte.
+        Poi sull’altro telefono usa Ripristina. Per usarlo offline: Safari/Chrome → Aggiungi a Home.
+      </p>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button type="button" class="on" data-view="compiti">Compiti</button>
+    <button type="button" data-view="caratteri">Caratteri</button>
+    <button type="button" data-view="note">Note</button>
+  </nav>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

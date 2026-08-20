@@ -1,0 +1,17 @@
+{
+  "name": "Compiti delle vacanze 4ALL",
+  "short_name": "Compiti",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3eee4",
+  "theme_color": "#1e3a5f",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
