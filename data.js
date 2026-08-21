@@ -189,6 +189,7 @@ const DATA = {
     {
       id: "ar",
       name: "Storia dell’arte",
+      short: "Arte",
       teacher: "Cristina Bertucci",
       who: "Bertucci",
       blurb: "Niente consegna su Classroom. Programma su Spaggiari + libro a piacere.",

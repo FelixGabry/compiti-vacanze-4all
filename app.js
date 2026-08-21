@@ -1,18 +1,28 @@
 const STORE = "compiti-4all-2026-v1";
 const CHAR_END = "2026-09-12";
 
-const state = load();
+function empty() {
+  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false, page: "home" };
+}
 
 function load() {
   try {
-    return JSON.parse(localStorage.getItem(STORE)) || empty();
+    const raw = JSON.parse(localStorage.getItem(STORE));
+    if (!raw) return empty();
+    return {
+      ...empty(),
+      ...raw,
+      checked: raw.checked || {},
+      notes: raw.notes || {},
+      chars: raw.chars || {},
+    };
   } catch {
     return empty();
   }
 }
-function empty() {
-  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false };
-}
+
+const state = load();
+
 function save() {
   localStorage.setItem(STORE, JSON.stringify(state));
 }
@@ -29,12 +39,6 @@ function isDone(id) {
   let found;
   walkTasks((t) => { if (t.id === id) found = t; });
   return !!(found && found.done);
-}
-
-function setDone(id, val) {
-  state.checked[id] = val;
-  save();
-  render();
 }
 
 function isComplete(task) {
@@ -58,6 +62,20 @@ function counts() {
   return { total, done };
 }
 
+function subjectStats(sub) {
+  let total = 0, done = 0;
+  sub.tasks.forEach((t) => {
+    if (t.optional && !state.showOptional && !isDone(t.id)) return;
+    total += 1;
+    if (isComplete(t)) done += 1;
+    (t.children || []).forEach((c) => {
+      total += 1;
+      if (isDone(c.id)) done += 1;
+    });
+  });
+  return { total, done, pct: total ? done / total : 0 };
+}
+
 function parentProgress(task) {
   if (!task.children) return null;
   const d = task.children.filter((c) => isDone(c.id)).length;
@@ -78,10 +96,22 @@ function weekday(iso) {
   return ["do", "lu", "ma", "me", "gi", "ve", "sa"][new Date(iso + "T12:00:00").getDay()];
 }
 
-let view = "compiti";
+function nextDay(iso) {
+  const d = new Date(iso + "T12:00:00");
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function charCounts() {
+  const start = state.firma ? nextDay(state.firma) : "2026-08-20";
+  const days = daysBetween(start, CHAR_END);
+  const done = days.filter((d) => state.chars[d]).length;
+  return { total: days.length, done, days, start };
+}
+
 let filter = "all";
 let query = "";
-let openSubject = "it";
+let menuOpen = false;
 const openReqs = new Set();
 
 function esc(s) {
@@ -134,7 +164,101 @@ function taskVisible(task, sub) {
   return taskBlob(task).includes(query);
 }
 
-function renderProgress() {
+function currentSubject() {
+  return DATA.subjects.find((s) => s.id === state.page);
+}
+
+function isSubjectPage() {
+  return !!currentSubject();
+}
+
+function goTo(page) {
+  state.page = page;
+  menuOpen = false;
+  query = "";
+  const q = document.getElementById("q");
+  if (q) q.value = "";
+  save();
+  window.scrollTo(0, 0);
+  render();
+}
+
+function setMenu(open) {
+  menuOpen = open;
+  renderMenu();
+}
+
+function tapCheck() {
+  try {
+    if (navigator.vibrate) navigator.vibrate(12);
+  } catch {
+    /* ignore */
+  }
+}
+
+function firstOpenTask(sub) {
+  for (const t of sub.tasks) {
+    if (t.optional && !state.showOptional && !isDone(t.id)) continue;
+    if (!isComplete(t)) return t;
+  }
+  return null;
+}
+
+function nextUp() {
+  const ranked = DATA.subjects
+    .map((s) => ({ s, ...subjectStats(s) }))
+    .filter((x) => x.done < x.total)
+    .sort((a, b) => a.pct - b.pct);
+  if (!ranked.length) return null;
+  const task = firstOpenTask(ranked[0].s);
+  if (!task) return null;
+  return { subject: ranked[0].s, task };
+}
+
+function pageLabel() {
+  if (state.page === "home") return "Home";
+  if (state.page === "caratteri") return "Caratteri";
+  if (state.page === "note") return "Note";
+  const s = currentSubject();
+  if (!s) return "Home";
+  const st = subjectStats(s);
+  return (s.short || s.name) + "  " + st.done + "/" + st.total;
+}
+
+function renderMenu() {
+  const sheet = document.getElementById("menu-sheet");
+  const backdrop = document.getElementById("menu-backdrop");
+  const btn = document.getElementById("menu-btn");
+  document.getElementById("menu-label").textContent = pageLabel();
+  btn.setAttribute("aria-expanded", menuOpen ? "true" : "false");
+  sheet.classList.toggle("hidden", !menuOpen);
+  backdrop.classList.toggle("hidden", !menuOpen);
+  if (!menuOpen) return;
+  const char = charCounts();
+  const items = [
+    { id: "home", label: "Home", meta: "" },
+    ...DATA.subjects.map((s) => {
+      const st = subjectStats(s);
+      return { id: s.id, label: s.short || s.name, meta: st.done + "/" + st.total };
+    }),
+    { id: "caratteri", label: "Caratteri", meta: char.done + "/" + char.total },
+    { id: "note", label: "Note", meta: "" },
+  ];
+  sheet.innerHTML = items.map((it) => `
+    <button type="button" class="menu-item${it.id === state.page ? " on" : ""}" data-go="${it.id}" role="menuitem">
+      <span>${esc(it.label)}</span>
+      ${it.meta ? `<span class="menu-meta">${esc(it.meta)}</span>` : ""}
+    </button>
+  `).join("");
+  sheet.querySelectorAll("[data-go]").forEach((b) => {
+    b.addEventListener("click", () => goTo(b.dataset.go));
+  });
+}
+
+function renderHeaderProgress() {
+  const home = state.page === "home";
+  document.getElementById("progress-row").classList.toggle("hidden", !home);
+  if (!home) return;
   const { total, done } = counts();
   const pct = total ? done / total : 0;
   const r = 18, circ = 2 * Math.PI * r;
@@ -144,45 +268,95 @@ function renderProgress() {
   document.getElementById("prog-pct").textContent = Math.round(pct * 100) + "%";
 }
 
-function renderCompiti() {
+function renderHome() {
+  const box = document.getElementById("home");
+  const nxt = nextUp();
+  const char = charCounts();
+  const cards = DATA.subjects.map((s) => {
+    const st = subjectStats(s);
+    const pct = Math.round(st.pct * 100);
+    const all = st.total && st.done === st.total;
+    return `
+      <button type="button" class="home-card${all ? " done" : ""}" data-go="${s.id}">
+        <div class="home-card-top">
+          <strong>${esc(s.name)}</strong>
+          <span class="due">${esc(s.due)}</span>
+        </div>
+        <div class="bar"><i style="width:${pct}%"></i></div>
+        <div class="home-meta">${st.done} / ${st.total}${all ? " · fatto" : ""}</div>
+      </button>
+    `;
+  }).join("");
+  const charPct = char.total ? Math.round((char.done / char.total) * 100) : 0;
+  const charDone = char.total && char.done === char.total;
+  box.innerHTML = `
+    ${nxt ? `
+      <button type="button" class="next-card" data-go="${nxt.subject.id}">
+        <div class="ask-kicker">Prossimo punto</div>
+        <div class="next-title">${esc(nxt.task.title)}</div>
+        <div class="hint">${esc(nxt.subject.name)}</div>
+      </button>
+    ` : `<p class="celebrate">Tutto spuntato.</p>`}
+    <div class="home-grid">${cards}</div>
+    <button type="button" class="home-card${charDone ? " done" : ""}" data-go="caratteri">
+      <div class="home-card-top">
+        <strong>Caratteri</strong>
+        <span class="due">12 set</span>
+      </div>
+      <div class="bar"><i style="width:${charPct}%"></i></div>
+      <div class="home-meta">${char.done} / ${char.total} giorni${charDone ? " · fatto" : ""}</div>
+    </button>
+    <button type="button" class="home-card" data-go="note">
+      <div class="home-card-top">
+        <strong>Note</strong>
+      </div>
+      <div class="home-meta">${state.journal ? "C’è già qualcosa nel diario" : "Diario e backup"}</div>
+    </button>
+  `;
+  box.querySelectorAll("[data-go]").forEach((b) => {
+    b.addEventListener("click", () => goTo(b.dataset.go));
+  });
+}
+
+function renderSubject() {
+  const sub = currentSubject();
   const box = document.getElementById("compiti");
   box.innerHTML = "";
-  DATA.subjects.forEach((sub) => {
-    const tasks = sub.tasks.filter((t) => taskVisible(t, sub));
-    if (!tasks.length && query) return;
-    const el = document.createElement("section");
-    el.className = "subject";
-    const leaf = sub.tasks.filter((t) => !t.optional || state.showOptional || isDone(t.id));
-    const doneN = leaf.filter((t) => isComplete(t)).length;
-    el.innerHTML = `
-      <button class="subject-h" data-open="${sub.id}">
-        <span class="dot"></span>
-        <div>
-          <h2>${esc(sub.name)}</h2>
-          ${sub.teacher ? `<p class="teacher">${esc(sub.teacher)}</p>` : ""}
-          <p class="blurb">${esc(sub.blurb)}</p>
-          <div class="count">${doneN}/${leaf.length} punti${sub.points ? " · " + esc(sub.points) : ""}</div>
-        </div>
-        <span class="due">${esc(sub.due)}</span>
-      </button>
-      <div class="body ${openSubject === sub.id ? "" : "hidden"}"></div>
-    `;
-    const body = el.querySelector(".body");
-    if (sub.ask) {
-      const ask = document.createElement("div");
-      ask.className = "ask";
-      ask.innerHTML = `<div class="ask-kicker">Richiesta complessiva</div>${esc(sub.ask).replace(/\n/g, "<br>")}`;
-      body.appendChild(ask);
-    }
-    tasks.forEach((task) => body.appendChild(renderTask(task, sub)));
-    el.querySelector("[data-open]").addEventListener("click", () => {
-      openSubject = openSubject === sub.id ? "" : sub.id;
-      render();
-    });
-    box.appendChild(el);
-  });
-  if (!box.children.length) {
-    box.innerHTML = '<p class="empty">Niente con questo filtro.</p>';
+  if (!sub) {
+    goTo("home");
+    return;
+  }
+  const st = subjectStats(sub);
+  const tasks = sub.tasks.filter((t) => taskVisible(t, sub));
+  const head = document.createElement("div");
+  head.className = "page-head";
+  head.innerHTML = `
+    <div class="page-head-row">
+      <h1>${esc(sub.name)}</h1>
+      <span class="due">${esc(sub.due)}</span>
+    </div>
+    ${sub.teacher ? `<p class="teacher">${esc(sub.teacher)}</p>` : ""}
+    <p class="blurb">${esc(sub.blurb)}</p>
+    <div class="bar page-bar"><i style="width:${Math.round(st.pct * 100)}%"></i></div>
+    <p class="count">${st.done} / ${st.total}</p>
+    ${st.done === st.total && st.total ? `<p class="celebrate">${esc(sub.short || sub.name)} fatto.</p>` : ""}
+  `;
+  box.appendChild(head);
+  if (sub.ask) {
+    const ask = document.createElement("details");
+    ask.className = "req";
+    ask.innerHTML = `<summary>Richiesta complessiva</summary><div class="req-body">${esc(sub.ask).replace(/\n/g, "<br>")}</div>`;
+    box.appendChild(ask);
+  }
+  const list = document.createElement("div");
+  list.className = "task-list";
+  tasks.forEach((task) => list.appendChild(renderTask(task, sub)));
+  box.appendChild(list);
+  if (!tasks.length) {
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = "Niente con questo filtro.";
+    box.appendChild(p);
   }
 }
 
@@ -227,8 +401,9 @@ function renderTask(task, sub) {
           state.checked[parent.id] = parent.children.every((c) => isDone(c.id) || (c.id === inp.dataset.id && inp.checked));
         }
       }));
+      if (inp.checked) tapCheck();
       save();
-      render();
+      setTimeout(render, inp.checked ? 220 : 0);
     });
   });
   wrap.querySelector("textarea.note").addEventListener("input", (e) => {
@@ -245,12 +420,10 @@ function findTask(id) {
 }
 
 function renderChars() {
-  const start = state.firma ? nextDay(state.firma) : "2026-08-20";
-  const days = daysBetween(start, CHAR_END);
-  const done = days.filter((d) => state.chars[d]).length;
+  const { days, done, total } = charCounts();
   document.getElementById("firma").value = state.firma || "";
   document.getElementById("char-stats").textContent =
-    done + " / " + days.length + " giorni · " + (days.length - done) + " ancora da fare · " + ((days.length - done) * 2) + " righe rimaste";
+    done + " / " + total + " giorni · " + (total - done) + " ancora da fare · " + ((total - done) * 2) + " righe rimaste";
   const cal = document.getElementById("cal");
   cal.innerHTML = days.map((d) => {
     const on = state.chars[d] ? " on" : "";
@@ -260,17 +433,12 @@ function renderChars() {
   cal.querySelectorAll(".day").forEach((b) => {
     b.addEventListener("click", () => {
       state.chars[b.dataset.day] = !state.chars[b.dataset.day];
+      if (state.chars[b.dataset.day]) tapCheck();
       save();
       renderChars();
-      renderProgress();
+      renderMenu();
     });
   });
-}
-
-function nextDay(iso) {
-  const d = new Date(iso + "T12:00:00");
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().slice(0, 10);
 }
 
 function renderJournal() {
@@ -278,15 +446,18 @@ function renderJournal() {
 }
 
 function render() {
-  document.getElementById("compiti-panel").classList.toggle("show", view === "compiti");
-  document.getElementById("char-panel").classList.toggle("show", view === "caratteri");
-  document.getElementById("note-panel").classList.toggle("show", view === "note");
-  document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.view === view));
-  document.getElementById("search-wrap").classList.toggle("hidden", view !== "compiti");
-  renderProgress();
-  if (view === "compiti") renderCompiti();
-  if (view === "caratteri") renderChars();
-  if (view === "note") renderJournal();
+  const subPage = isSubjectPage();
+  document.getElementById("home-panel").classList.toggle("show", state.page === "home");
+  document.getElementById("compiti-panel").classList.toggle("show", subPage);
+  document.getElementById("char-panel").classList.toggle("show", state.page === "caratteri");
+  document.getElementById("note-panel").classList.toggle("show", state.page === "note");
+  document.getElementById("search-wrap").classList.toggle("hidden", !subPage);
+  renderHeaderProgress();
+  renderMenu();
+  if (state.page === "home") renderHome();
+  if (subPage) renderSubject();
+  if (state.page === "caratteri") renderChars();
+  if (state.page === "note") renderJournal();
 }
 
 function backup() {
@@ -294,10 +465,15 @@ function backup() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".tabs button").forEach((b) => {
-    b.addEventListener("click", () => { view = b.dataset.view; render(); });
+  document.getElementById("menu-btn").addEventListener("click", () => setMenu(!menuOpen));
+  document.getElementById("menu-backdrop").addEventListener("click", () => setMenu(false));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") setMenu(false);
   });
-  document.getElementById("q").addEventListener("input", (e) => { query = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById("q").addEventListener("input", (e) => {
+    query = e.target.value.trim().toLowerCase();
+    render();
+  });
   document.querySelectorAll("[data-filter]").forEach((b) => {
     b.addEventListener("click", () => {
       filter = b.dataset.filter;
@@ -315,6 +491,7 @@ window.addEventListener("DOMContentLoaded", () => {
     state.firma = e.target.value;
     save();
     renderChars();
+    renderMenu();
   });
   document.getElementById("journal").addEventListener("input", (e) => {
     state.journal = e.target.value;
@@ -337,7 +514,8 @@ window.addEventListener("DOMContentLoaded", () => {
     const r = new FileReader();
     r.onload = () => {
       try {
-        Object.assign(state, JSON.parse(r.result));
+        const parsed = JSON.parse(r.result);
+        Object.assign(state, empty(), parsed);
         save();
         render();
         alert("Backup ripristinato.");
@@ -348,6 +526,9 @@ window.addEventListener("DOMContentLoaded", () => {
     r.readAsText(f);
   });
   if (state.showOptional) document.getElementById("opt").classList.add("on");
+  if (state.page && state.page !== "home" && !isSubjectPage() && state.page !== "caratteri" && state.page !== "note") {
+    state.page = "home";
+  }
   render();
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     navigator.serviceWorker.register("./sw.js");
