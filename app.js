@@ -132,6 +132,45 @@ function filesHtml(list) {
   }).join("")}</div>`;
 }
 
+const KIND_LABEL = {
+  due: "Consegna",
+  exam: "Verifica",
+  oral: "Orale",
+  dictation: "Dettato",
+  maybe: "Attenzione",
+};
+
+function daysLeft(iso) {
+  if (!iso) return null;
+  const now = new Date();
+  now.setHours(12, 0, 0, 0);
+  const d = new Date(iso + "T12:00:00");
+  return Math.round((d.getTime() - now.getTime()) / 86400000);
+}
+
+function whenText(iso) {
+  const n = daysLeft(iso);
+  if (n == null) return "";
+  if (n < 0) return " · scaduto";
+  if (n === 0) return " · oggi";
+  if (n === 1) return " · domani";
+  return " · tra " + n + " giorni";
+}
+
+function alertHtml(list) {
+  if (!list || !list.length) return "";
+  return `<div class="alerts">${list.map((a) => `
+    <div class="alert alert-${esc(a.kind || "due")}">
+      <span class="alert-kind">${esc(KIND_LABEL[a.kind] || "Scadenza")}</span>
+      ${esc(a.label)}${esc(whenText(a.date))}
+    </div>`).join("")}</div>`;
+}
+
+function nearestAlert(list) {
+  if (!list || !list.length) return null;
+  return list.slice().sort((a, b) => (a.date || "9999") < (b.date || "9999") ? -1 : 1)[0];
+}
+
 function reqHtml(id, text, who) {
   if (!text) return "";
   const open = openReqs.has(id) ? " open" : "";
@@ -153,13 +192,13 @@ function bindReqs(root) {
 }
 
 function taskBlob(task) {
-  const parts = [task.title, task.hint, task.req, task.who, ...(task.files || []).map((f) => f.name)];
+  const parts = [task.title, task.hint, task.req, task.who, ...(task.files || []).map((f) => f.name), ...(task.alerts || []).map((a) => a.label)];
   (task.children || []).forEach((c) => parts.push(c.title, c.req));
   return parts.filter(Boolean).join(" ").toLowerCase();
 }
 
 function subjectBlob(sub) {
-  return [sub.name, sub.teacher, sub.ask, sub.blurb, sub.points].filter(Boolean).join(" ").toLowerCase();
+  return [sub.name, sub.teacher, sub.ask, sub.blurb, sub.points, ...(sub.alerts || []).map((a) => a.label)].filter(Boolean).join(" ").toLowerCase();
 }
 
 function taskVisible(task, sub) {
@@ -247,13 +286,14 @@ function renderMenu() {
     { id: "home", label: "Home", meta: "" },
     ...DATA.subjects.map((s) => {
       const st = subjectStats(s);
-      return { id: s.id, label: s.short || s.name, meta: st.done + "/" + st.total };
+      const hot = !!(s.alerts && s.alerts.length) && !(st.total && st.done === st.total);
+      return { id: s.id, label: s.short || s.name, meta: st.done + "/" + st.total, hot };
     }),
-    { id: "caratteri", label: "Caratteri", meta: char.done + "/" + char.total },
+    { id: "caratteri", label: "Caratteri", meta: char.done + "/" + char.total, hot: !(char.total && char.done === char.total) },
     { id: "note", label: "Note", meta: "" },
   ];
   sheet.innerHTML = items.map((it) => `
-    <button type="button" class="menu-item${it.id === state.page ? " on" : ""}" data-go="${it.id}" role="menuitem">
+    <button type="button" class="menu-item${it.id === state.page ? " on" : ""}${it.hot ? " hot" : ""}" data-go="${it.id}" role="menuitem">
       <span>${esc(it.label)}</span>
       ${it.meta ? `<span class="menu-meta">${esc(it.meta)}</span>` : ""}
     </button>
@@ -276,20 +316,46 @@ function renderHeaderProgress() {
   document.getElementById("prog-pct").textContent = Math.round(pct * 100) + "%";
 }
 
+function septemberWatch() {
+  const rows = [];
+  DATA.subjects.forEach((s) => {
+    const st = subjectStats(s);
+    if (st.total && st.done === st.total) return;
+    (s.alerts || []).forEach((a) => {
+      rows.push({ ...a, go: s.id, name: s.short || s.name });
+    });
+  });
+  const char = charCounts();
+  if (!(char.total && char.done === char.total)) {
+    rows.push({ kind: "due", date: CHAR_END, label: "2 righe di caratteri al giorno fino al 12 settembre", go: "caratteri", name: "Caratteri" });
+  }
+  const seen = new Set();
+  return rows.filter((r) => {
+    const k = r.go + r.kind + r.label;
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  }).sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"));
+}
+
 function renderHome() {
   const box = document.getElementById("home");
   const nxt = nextUp();
   const char = charCounts();
+  const watch = septemberWatch();
   const cards = DATA.subjects.map((s) => {
     const st = subjectStats(s);
     const pct = Math.round(st.pct * 100);
     const all = st.total && st.done === st.total;
+    const hot = !all && s.alerts && s.alerts.length;
+    const top = nearestAlert(s.alerts);
     return `
-      <button type="button" class="home-card${all ? " done" : ""}" data-go="${s.id}">
+      <button type="button" class="home-card${all ? " done" : ""}${hot ? " hot" : ""}" data-go="${s.id}">
         <div class="home-card-top">
           <strong>${esc(s.name)}</strong>
-          <span class="due">${esc(s.due)}</span>
+          <span class="due${hot ? " hot" : ""}">${esc(s.due)}</span>
         </div>
+        ${hot && top ? `<div class="alert-line">${esc(KIND_LABEL[top.kind] || "Scadenza")} · ${esc(top.label)}${esc(whenText(top.date))}</div>` : ""}
         <div class="bar"><i style="width:${pct}%"></i></div>
         <div class="home-meta">${st.done} / ${st.total}${all ? " · fatto" : ""}</div>
       </button>
@@ -297,7 +363,18 @@ function renderHome() {
   }).join("");
   const charPct = char.total ? Math.round((char.done / char.total) * 100) : 0;
   const charDone = char.total && char.done === char.total;
+  const watchHtml = watch.length ? `
+    <div class="sept-box">
+      <div class="sept-kicker">Settembre — scadenze e prove</div>
+      ${watch.map((w) => `
+        <button type="button" class="sept-row" data-go="${w.go}">
+          <span class="alert-kind">${esc(KIND_LABEL[w.kind] || "Scadenza")}</span>
+          <span><strong>${esc(w.name)}</strong> — ${esc(w.label)}${esc(whenText(w.date))}</span>
+        </button>
+      `).join("")}
+    </div>` : "";
   box.innerHTML = `
+    ${watchHtml}
     ${nxt ? `
       <button type="button" class="next-card" data-go="${nxt.subject.id}">
         <div class="ask-kicker">Prossimo punto</div>
@@ -306,11 +383,12 @@ function renderHome() {
       </button>
     ` : `<p class="celebrate">Tutto spuntato.</p>`}
     <div class="home-grid">${cards}</div>
-    <button type="button" class="home-card${charDone ? " done" : ""}" data-go="caratteri">
+    <button type="button" class="home-card${charDone ? " done" : " hot"}" data-go="caratteri">
       <div class="home-card-top">
         <strong>Caratteri</strong>
-        <span class="due">12 set</span>
+        <span class="due${charDone ? "" : " hot"}">12 set</span>
       </div>
+      ${charDone ? "" : `<div class="alert-line">Consegna · 2 righe al giorno fino al 12 settembre${esc(whenText(CHAR_END))}</div>`}
       <div class="bar"><i style="width:${charPct}%"></i></div>
       <div class="home-meta">${char.done} / ${char.total} giorni${charDone ? " · fatto" : ""}</div>
     </button>
@@ -341,10 +419,11 @@ function renderSubject() {
   head.innerHTML = `
     <div class="page-head-row">
       <h1>${esc(sub.name)}</h1>
-      <span class="due">${esc(sub.due)}</span>
+      <span class="due${sub.alerts && sub.alerts.length ? " hot" : ""}">${esc(sub.due)}</span>
     </div>
     ${sub.teacher ? `<p class="teacher">${esc(sub.teacher)}</p>` : ""}
     <p class="blurb">${esc(sub.blurb)}</p>
+    ${alertHtml(sub.alerts)}
     <div class="bar page-bar"><i style="width:${Math.round(st.pct * 100)}%"></i></div>
     <p class="count">${st.done} / ${st.total}</p>
     ${st.done === st.total && st.total ? `<p class="celebrate">${esc(sub.short || sub.name)} fatto.</p>` : ""}
@@ -379,6 +458,7 @@ function renderTask(task, sub) {
             <input class="check" type="checkbox" data-id="${c.id}" ${isDone(c.id) ? "checked" : ""}>
             <span>${esc(c.title)}</span>
           </label>
+          ${alertHtml(c.alerts || task.alerts)}
           ${reqHtml(c.id, c.req, c.who || task.who || sub.who)}
           ${filesHtml(c.files || task.files)}
         </div>`).join("")}</div>`
@@ -389,6 +469,7 @@ function renderTask(task, sub) {
       <input class="check" type="checkbox" data-id="${task.id}" ${isComplete(task) ? "checked" : ""}>
       <div>
         <div class="title">${esc(task.title)}${task.optional ? '<span class="badge">facoltativo</span>' : ""}${prog ? " · " + prog : ""}</div>
+        ${alertHtml(task.alerts)}
         ${task.hint ? `<div class="hint">${esc(task.hint)}</div>` : ""}
         ${reqHtml(task.id, task.req, task.who || sub.who)}
         ${filesHtml(task.files)}
@@ -432,6 +513,13 @@ function findTask(id) {
 
 function renderChars() {
   const { days, done, total } = charCounts();
+  const el = document.getElementById("char-alerts");
+  if (el) {
+    el.innerHTML = alertHtml([
+      { kind: "due", date: CHAR_END, label: "2 righe di caratteri al giorno fino al 12 settembre" },
+      { kind: "dictation", date: "2026-09-14", label: "Dettato della Zu al rientro" },
+    ]);
+  }
   document.getElementById("firma").value = state.firma || "";
   document.getElementById("char-stats").textContent =
     done + " / " + total + " giorni · " + (total - done) + " ancora da fare · " + ((total - done) * 2) + " righe rimaste";

@@ -24,6 +24,17 @@ const F = {
   maOb: { name: "Obiettivi minimi matematica.pdf", href: "./file/ma-obiettivi.pdf" },
 };
 
+const A = {
+  school: { kind: "due", date: "2026-09-14", label: "Consegna a inizio scuola" },
+  oralIt: { kind: "oral", date: "2026-09-14", label: "A settembre serve saperne parlare (interrogazione / orale)" },
+  examEn: { kind: "exam", date: "2026-09-14", label: "Verifica a settembre (Manfredda)" },
+  due14: { kind: "due", date: "2026-09-14", label: "Consegna 14 settembre ore 08:00" },
+  due12: { kind: "due", date: "2026-09-12", label: "Scadenza 12 settembre" },
+  oralZh: { kind: "oral", date: "2026-09-14", label: "Orale al rientro: riassunto e opinioni in cinese" },
+  dictZu: { kind: "dictation", date: "2026-09-14", label: "Dettato della Zu al rientro" },
+  maybeEs: { kind: "maybe", date: "2026-09-14", label: "Possibile orale/verifica a settembre (in chat non è confermato)" },
+};
+
 const DATA = {
   className: "4ALL linguistico",
   school: "Liceo Cairoli — Vigevano",
@@ -36,6 +47,8 @@ const DATA = {
       points: "2 × 100 punti",
       blurb: "3 libri dalla lista + 3 temi di maturità. Niente AI.",
       due: "inizio scuola",
+      dueDate: "2026-09-14",
+      alerts: [A.school, A.oralIt],
       files: [F.itLetture, F.itTracce],
       ask: "Due lavori su Classroom, ciascuno da 100 punti.\n\n1) LETTURE ESTIVE: «Leggete almeno tre libri tra quelli indicati.» Lista ufficiale: Letture estive quarta.pptx.pdf. Li hai già scelti: Calvino, Balzano, Pirandello. Vanno letti per intero. Non c’è relazione da consegnare: serve saperne parlare.\n\n2) TEMI: «Svolgete un tema di tipologia A, uno di B e uno di C, scegliendo tra le tracce proposte alla scorsa maturità. Niente AI, lavorate con lo scopo di confrontarvi con una vera prova dell’esame di stato. Consegnate i vostri lavori qui in word entro l’inizio della scuola.» Allegato: P000_ORD25.pdf (sessione ordinaria 2025).",
       tasks: [
@@ -44,24 +57,28 @@ const DATA = {
           title: "Letto Calvino — Il sentiero dei nidi di ragno",
           hint: "Scheda già pronta in cartella Italiano.",
           files: [F.itLetture, F.itCalvino],
+          alerts: [A.oralIt],
           req: "Compito Classroom «Letture estive» (100 punti). Testo della prof: «Leggete almeno tre libri tra quelli indicati.»\n\nQuesto è il 1° dei tre scelti. Pin, dieci anni, orfano; dopo l’8 settembre 1943 viene coinvolto nella Resistenza in Liguria e cerca un amico a cui rivelare il segreto dei nidi di ragno.\n\nVa letto per intero prima dell’inizio della scuola. Nessuna scheda da consegnare: a settembre serve saperne parlare (trama, personaggi, stile).",
         },
         {
           id: "it-calvino-oral",
           title: "So raccontare Calvino (trama, personaggi, stile)",
           files: [F.itCalvino],
+          alerts: [A.oralIt],
           req: "Non è un compito Classroom a sé. La prof chiede di leggere i libri: in classe ci si aspetta che tu sappia raccontarli, come per una verifica o un orale.\n\nTieni pronto: chi è Pin; dove è ambientato; cosa succede dopo l’8 settembre; i personaggi principali; lo stile di Calvino (primo romanzo, Resistenza vista da un bambino).",
         },
         {
           id: "it-balzano",
           title: "Letto Balzano — Resto qui",
           files: [F.itLetture],
+          alerts: [A.oralIt],
           req: "2° libro della lista ufficiale (Classroom, 100 punti). Stesso vincolo: leggerlo per intero, niente relazione da consegnare.\n\nTrina, di Curon in Sudtirolo, resiste ai fascisti che bandiscono il tedesco, fugge in montagna col marito disertore, affronta l’inondazione del paese per la diga. Si difende con le parole.",
         },
         {
           id: "it-pirandello",
           title: "Letto Pirandello — Il fu Mattia Pascal",
           files: [F.itLetture],
+          alerts: [A.oralIt],
           req: "3° libro della lista ufficiale (Classroom, 100 punti). Stesso vincolo: leggerlo per intero.\n\n1904. Mattia Pascal, dopo una lite in famiglia, vince a Montecarlo e, creduto morto per un errore di identificazione, finge la propria morte e tenta una nuova vita a Roma come Adriano Meis.",
         },
         {
@@ -69,6 +86,7 @@ const DATA = {
           title: "Tema tipologia A (A1 o A2) in Word",
           hint: "Niente AI. Lo scrivi tu.",
           files: [F.itTracce],
+          alerts: [A.school],
           req: "Testo Classroom: un tema di tipologia A (analisi e interpretazione di un testo letterario italiano), scegliendo tra le tracce della maturità 2025, sessione ordinaria (P000_ORD25.pdf). Niente AI. File Word. Inizio scuola.\n\nScegli UNA delle due:\n\n• A1 — Pier Paolo Pasolini, poesia Appendice I a «Dal diario» (1943-1944). Comprensione e analisi: 4 domande (contenuto e figure di stile; relazione natura/poeta; funzione della luna; significato del canto dei grilli) + interpretazione sul trascorrere del tempo e sulla relazione con la natura, anche con altri autori o arti.\n\n• A2 — Giuseppe Tomasi di Lampedusa, Il Gattopardo: prima visita di Angelica, da fidanzata, alla famiglia Salina. Comprensione e analisi: 4 domande (riassunto; i tre personaggi; atteggiamenti di Angelica e don Calogero verso il Principe; come si capisce che don Calogero mente) + interpretazione sui rapporti aristocrazia/borghesia e sulle inquietudini nei cambiamenti politici.\n\nRiferimento della prova ufficiale: 6 ore; dizionario italiano consentito in sede d’esame. La prof non impone la durata per le vacanze, ma il lavoro deve essere tuo, come una vera prima prova.",
         },
         {
@@ -76,6 +94,7 @@ const DATA = {
           title: "Tema tipologia B (B1, B2 o B3) in Word",
           hint: "Niente AI. Lo scrivi tu.",
           files: [F.itTracce],
+          alerts: [A.school],
           req: "Tipologia B: analisi e produzione di un testo argomentativo. Scegli UNA delle tre tracce della maturità 2025 (P000_ORD25.pdf). Niente AI. Word. Inizio scuola.\n\n• B1 — Piers Brendon, Gli anni trenta. New Deal di Roosevelt (banche, legislazione di emergenza, discorsi radiofonici). 4 domande di comprensione/analisi + produzione sul rapporto tra leader politici e cittadini attraverso i mezzi di comunicazione di massa di oggi (radio, TV, giornali, social).\n\n• B2 — Riccardo Maccioni, «Rispetto» parola Treccani 2024 (Avvenire, 17/12/2024). Il rispetto come attenzione, stima, cura; la mancanza di rispetto come radice della violenza. 4 domande + produzione: il tuo punto di vista, testo coerente e coeso.\n\n• B3 — Telmo Pievani, Un quarto d’era (geologica) di celebrità. Antropocene: nel 2020 la massa degli oggetti umani ha eguagliato la biomassa. 4 domande + produzione sull’impatto ambientale ed economico della «tecnosfera» e su possibili soluzioni.",
         },
         {
@@ -83,12 +102,14 @@ const DATA = {
           title: "Tema tipologia C (C1 o C2) in Word",
           hint: "Niente AI. Lo scrivi tu.",
           files: [F.itTracce],
+          alerts: [A.school],
           req: "Tipologia C: riflessione critica espositivo-argomentativa su tematiche di attualità. Scegli UNA delle due. Niente AI. Word. Inizio scuola. Titolo complessivo + paragrafi titolati.\n\n• C1 — Paolo Borsellino, I giovani, la mia speranza (Epoca, 14/10/1992). Identità di Palermo, consenso alla mafia, ottimismo legato ai giovani. Riflettere, da studente e cittadino, sul messaggio di Borsellino e sul valore per i giovani di oggi.\n\n• C2 — Anna Meldolesi e Chiara Lalli (7-Sette / Corriere della Sera, 13/12/2024). L’indignazione come motore dei social: spesso accompagna contenuti discutibili e non porta ad approfondire. Riflettere su questa caratteristica dei social.",
         },
         {
           id: "it-consegna",
           title: "Temi consegnati su Classroom",
           files: [F.itTracce],
+          alerts: [A.school],
           req: "Consegna: file Word su Classroom entro l’inizio della scuola. Vincolo esplicito: «Niente AI».\n\nI libri non si consegnano: si leggono. I temi sì. Sono due compiti Classroom distinti (letture 100 punti + temi 100 punti).",
         },
       ],
@@ -101,6 +122,8 @@ const DATA = {
       points: "lettorato 100 punti",
       blurb: "Dickens obbligatorio (verifica a settembre) + Unit 6 e due video.",
       due: "inizio scuola",
+      dueDate: "2026-09-14",
+      alerts: [A.examEn, A.school],
       files: [F.enModulo, F.enScheda, F.enProg],
       ask: "Due compiti Classroom, senza data di consegna impostata (da fare per l’inizio della scuola).\n\n1) MANFREDDA — SUMMER HOMEWORK & PROGRAMMA SVOLTO (modulo 03/06/2026):\n«Durante il periodo estivo gli studenti dovranno svolgere con cura le attività indicate di seguito, con l’obiettivo di consolidare le competenze linguistiche acquisite nel corso dell’anno.\nLettura obbligatoria: A Christmas Carol by Charles Dickens (PDF su Google Classroom).\nGli esercizi sono facoltativi. Ciò che resta obbligatoria è la lettura del libro, che sarà oggetto di valutazione a settembre e sarà parte del programma di quinta. Fissa quindi bene la trama, i personaggi e le tematiche che emergono dalla lettura prendendo appunti sul quaderno.»\nNiente debito: per te vale solo lettura + appunti. La fascia «sufficiente» (Oxford Grammar extra) è extra solo se hai ancora forti incertezze di grammatica.\n\n2) LETTORATO — SUMMER HOMEWORK (100 punti): esercizi Performer B2 Unit 6 «Save the Earth» + due video con domande.",
       tasks: [
@@ -109,6 +132,7 @@ const DATA = {
           title: "Letto A Christmas Carol (Black Cat)",
           who: "Manfredda",
           files: [F.enModulo],
+          alerts: [A.examEn],
           req: "Modulo compiti estivi, 03/06/2026: «Lettura obbligatoria: A Christmas Carol by Charles Dickens (PDF su Google Classroom).»\n\nEdizione: Black Cat, 2003, Peter Foreman, 6 capitoli. Sarà oggetto di valutazione a settembre e parte del programma di quinta. Va letto per intero. Il reader completo sta su Classroom: qui non lo allego perché è un libro.",
         },
         {
@@ -118,6 +142,7 @@ const DATA = {
           done: true,
           who: "Manfredda",
           files: [F.enScheda, F.enModulo],
+          alerts: [A.examEn],
           req: "Testo letterale del modulo: «Fissa quindi bene la trama, i personaggi e le tematiche che emergono dalla lettura prendendo appunti sul quaderno.»\n\nObbligatorio: plot, characters, themes. Gli appunti sul telefono/PC non bastano: il prof chiede il quaderno. La scheda in cartella Inglese è già pronta da copiare.",
         },
         {
@@ -125,6 +150,7 @@ const DATA = {
           title: "So raccontare i 6 capitoli ad alta voce (inglese)",
           who: "Manfredda",
           files: [F.enScheda],
+          alerts: [A.examEn],
           req: "Il libro «sarà oggetto di valutazione a settembre». Non è un esercizio da consegnare: è per la prova. Devi saper raccontare i 6 capitoli in inglese (Marley, i tre spiriti, il cambiamento di Scrooge) senza leggere.",
         },
         {
@@ -139,24 +165,28 @@ const DATA = {
           id: "en-106",
           title: "Performer B2 p. 106 — es. 1–5",
           who: "il lettorato",
+          alerts: [A.school],
           req: "SUMMER HOMEWORK (LETTORATO), 100 punti. Unit 6 «Save the Earth», coursebook Performer B2.\nPagina 106: esercizi 1, 2, 3, 4 e 5. Da consegnare su Classroom (insieme al resto del lettorato) per l’inizio della scuola.",
         },
         {
           id: "en-108",
           title: "Performer B2 p. 108 — es. 1",
           who: "il lettorato",
+          alerts: [A.school],
           req: "Stesso compito lettorato (100 punti). Pagina 108: solo l’esercizio 1.",
         },
         {
           id: "en-110",
           title: "Performer B2 p. 110 — es. 1–4",
           who: "il lettorato",
+          alerts: [A.school],
           req: "Stesso compito lettorato (100 punti). Pagina 110: esercizi 1, 2, 3 e 4.",
         },
         {
           id: "en-114",
           title: "Performer B2 p. 114 — es. 3–4",
           who: "il lettorato",
+          alerts: [A.school],
           req: "Active Citizenship LAB, stesso compito lettorato (100 punti). Pagina 114: esercizi 3 e 4.",
         },
         {
@@ -164,6 +194,7 @@ const DATA = {
           title: "Video 1 + risposte: Why I live a zero waste life",
           who: "il lettorato",
           href: "https://www.youtube.com/watch?v=pF72px2R3Hg",
+          alerts: [A.school],
           req: "Lettorato, 100 punti. Guarda il video (Lauren Singer, TEDxTeen) e rispondi in inglese:\n\n1. According to the video, how can you achieve a zero-waste lifestyle?\n2. Do you think you would be able to go zero waste? Why? Why not?",
         },
         {
@@ -171,12 +202,14 @@ const DATA = {
           title: "Video 2 + risposte: The Simple Solution to Fast Fashion",
           who: "il lettorato",
           href: "https://www.youtube.com/watch?v=Bh8dnw67rE0",
+          alerts: [A.school],
           req: "Lettorato, 100 punti. Guarda il video (Josephine Philips, TED — «The climate solution in your closet») e rispondi in inglese:\n\n1. How often do you buy new clothes?\n2. What questions do you ask yourself before buying new stuff (if any)?\n3. Do you have a clothing item you are particularly affectionate about? What about any other possession?",
         },
         {
           id: "en-consegna",
           title: "Lettorato consegnato su Classroom",
           who: "il lettorato",
+          alerts: [A.school],
           req: "Compito Classroom «SUMMER HOMEWORK (LETTORATO)», 100 punti. Data di consegna non impostata: comunque per l’inizio della scuola.\n\nDa consegnare: esercizi Unit 6 (pp. 106, 108, 110, 114) + risposte ai due video. Dickens non si consegna: si legge e si studia per la verifica di Manfredda.",
         },
       ],
@@ -188,6 +221,8 @@ const DATA = {
       who: "la prof (finora solo dalla chat)",
       blurb: "Sepúlveda: due storie nello stesso volume. In chat risulta solo la lettura.",
       due: "inizio scuola",
+      dueDate: "2026-09-14",
+      alerts: [A.maybeEs],
       files: [F.esScheda],
       ask: "Fonte: chat di classe, non un compito Classroom ufficiale. Elisa ha mandato la copertina; Aurora il PDF (103 pp., Tusquets).\n\nLibro: Luis Sepúlveda, Diario de un killer sentimental seguido de Yacaré (due novelas cortas nello stesso volume).\n\nDalla chat NON risultano: data di consegna, verifica, relazione, appunti obbligatori, extra per debito. Finché non arriva il post della prof, il compito è leggere entrambe le storie in spagnolo.\n\nGli appunti (trama, personaggi, temi) non sono richiesti per iscritto: servono se a settembre c’è orale o verifica.",
       tasks: [
@@ -195,12 +230,14 @@ const DATA = {
           id: "es-diario",
           title: "Letto Diario de un killer sentimental",
           files: [F.esScheda],
+          alerts: [A.maybeEs],
           req: "Prima storia del volume. Un killer a pagamento infrange le regole della professione perché si innamora. La caccia alla vittima lo porta da Parigi a Madrid, da Istanbul al Messico.\n\nVa letto in spagnolo. La chat non chiede altro di esplicito sulla prima storia.",
         },
         {
           id: "es-yacare",
           title: "Letto Yacaré",
           files: [F.esScheda],
+          alerts: [A.maybeEs],
           req: "Seconda storia dello stesso volume: va letta anche questa (non basta la prima). Un investigatore di una compagnia di assicurazioni (ex poliziotto) lascia Zurigo per Milano e finisce nel mondo degli indios anaré, nel sud del Brasile. Al centro i yacarés (piccoli coccodrilli) e temi di Sepúlveda: ambiente, specie protette, scontro tra culture.",
         },
         {
@@ -210,11 +247,13 @@ const DATA = {
           done: true,
           req: "Non risultano obbligatori dalla chat. Li tieni per te se a settembre c’è verifica o orale. Scheda già pronta in cartella Spagnolo (12 sezioni, spagnolo semplice): da rileggere, non da consegnare.",
           files: [F.esScheda],
+          alerts: [A.maybeEs],
         },
         {
           id: "es-oral",
           title: "So raccontare le 12 sezioni ad alta voce (spagnolo)",
           files: [F.esScheda],
+          alerts: [A.maybeEs],
           req: "Non è una consegna della prof (la chat non la menziona). È preparazione: saper raccontare le due storie in spagnolo, senza guardare gli appunti.",
         },
       ],
@@ -252,6 +291,7 @@ const DATA = {
       blurb: "Teoria + esercizi in nero + Balbi con relazione. Consegna 14 settembre ore 08:00.",
       due: "14 set 08:00",
       dueDate: "2026-09-14",
+      alerts: [A.due14],
       files: [F.fiPdf],
       ask: "Classroom: «lavoro estivo di fisica» — 100 punti. Consegna 14 settembre ore 08:00. «Seguire le indicazioni presenti nel file allegato» (4ALL - fisica.pdf).\n\nPost del 17 giugno: «ho inserito i compiti delle vacanze differenziandoli tra compiti e esercizi aggiuntivi per chi ha il debito. Gli esercizi aggiuntivi per chi ha il debito sono assegnati anche agli studenti che hanno raggiunto la sufficienza con aiuto.»\n\nTre parti:\n1) Ripasso di teoria di tutto il programma realmente svolto in quarta (appunti o libro).\n2) Esercizi dal PDF: senza debito fai SOLO quelli digitati in nero. Debito o sufficienza con aiuto: neri + evidenziati. I colori si vedono solo nel PDF originale.\n3) Leggere Cercatori di meraviglia (Amedeo Balbi) e fare una piccola relazione.\n\nTu non hai debito: solo neri + libro + relazione. Tocca «Cosa chiede il prof» sotto ogni esercizio per il testo completo (così non ti serve il PDF in tasca).",
       tasks: [
@@ -259,12 +299,14 @@ const DATA = {
           id: "fi-teoria",
           title: "Ripassata la teoria di quarta",
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Richiesta nel PDF: ripassare la teoria di tutti gli argomenti presenti nel programma realmente svolto di quarta (appunti oppure libro).\n\nArgomenti che ricorrono negli esercizi: pressione e fluidi (Pascal, Torricelli, spinta idrostatica); momento angolare e d’inerzia; moto circolare, caduta, pendolo, energia, lavoro; gravità, orbite, fuga, buchi neri; molle e montagne russe; suono (Doppler, intensità, dB); ottica (riflessione, rifrazione, specchi, onde EM).",
         },
         {
           id: "fi-colori",
           title: "Controllato nel PDF quali esercizi sono in nero",
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Il prof differenzia neri / evidenziati. Questo elenco ha tutti e 48 i testi, ma i colori NON si vedono qui. Prima di spuntare «svolti i neri», apri 4ALL - fisica.pdf e segna quali sono in nero. Gli esercizi 13 e 32 hanno una figura: usala dal PDF.",
         },
         {
@@ -272,6 +314,7 @@ const DATA = {
           title: "Svolti gli esercizi in nero",
           hint: "Spunta sotto solo quelli neri del PDF. Gli evidenziati non ti spettano.",
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Regola: senza debito solo i problemi digitati in nero. Svolgi il procedimento (non basta il risultato). 13 e 32: c’è la figura nel PDF.",
           children: items("fi", [
             [1, "Cubo sotto vuoto — forza sul coperchio", "Un cubo di 1 m di spigolo è sottoposto alla pressione standard e viene chiuso con un coperchio quadrato delle stesse dimensioni dello spigolo. Una volta chiuso dal cubo viene aspirata tutta l’aria. Calcola la forza necessaria per aprire il cubo."],
@@ -329,11 +372,13 @@ const DATA = {
           title: "Esercizi evidenziati (debito / sufficienza con aiuto)",
           optional: true,
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Post Classroom del 17 giugno: gli extra evidenziati sono per chi ha il debito formativo o ha preso la sufficienza con aiuto. Tu non hai debito: non ti spettano. Restano nascosti finché non premi Facoltativi.",
         },
         {
           id: "fi-balbi",
           title: "Letto Balbi — Cercatori di meraviglia",
+          alerts: [A.due14],
           req: "Post Classroom del 5 giugno: «il libro che vorrei proporre».\n\nAmedeo Balbi, Cercatori di meraviglia. Storie di grandi scienziati curiosi del mondo (Rizzoli, 2021, 252 pp.). Storia della scienza attraverso la curiosità (Galileo, Faraday, Becquerel, Cavendish…). Va letto. La relazione è il punto successivo.",
         },
         {
@@ -341,12 +386,14 @@ const DATA = {
           title: "Scritta la piccola relazione sul libro",
           hint: "La scrivi tu. Consegna insieme al lavoro estivo.",
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Nel PDF: «Leggere e fare una piccola relazione del libro». Il prof non precisa lunghezza né formato: relazione breve, chiara, tua. Consegnarla insieme al lavoro estivo entro il 14 settembre ore 08:00. Non farla scrivere all’AI: è parte del compito da 100 punti.",
         },
         {
           id: "fi-consegna",
           title: "Consegnato il lavoro su Classroom",
           files: [F.fiPdf],
+          alerts: [A.due14],
           req: "Compito Classroom «lavoro estivo di fisica», 100 punti. Scadenza: 14 settembre 2026, ore 08:00. Insieme: esercizi (neri) + piccola relazione sul Balbi.",
         },
       ],
@@ -360,6 +407,7 @@ const DATA = {
       blurb: "Teoria + colonna sinistra / «per tutti». Consegna 14 settembre ore 08:00.",
       due: "14 set 08:00",
       dueDate: "2026-09-14",
+      alerts: [A.due14],
       files: [F.maPdf, F.maOb],
       ask: "Classroom: «esercizi per le vacanze» — 100 punti. Consegna 14 settembre ore 08:00. «Segui le istruzioni presenti nel file allegato» (4ALL - matematica.pdf).\n\nStesso post del 17 giugno di fisica: extra per debito e per chi ha preso la sufficienza con aiuto.\n\nCosa fare (niente debito):\n1) Ripassare tutta la teoria dell’anno (goniometria, trigonometria, esponenziali e logaritmi — obiettivi minimi 4A linguistico).\n2) Svolgere gli esercizi della colonna di sinistra e le sezioni «per tutti». La colonna di destra e i blocchi «solo debito» NON ti spettano.\n\nA destra di molti esercizi ci sono già i risultati in blu: autocontrollo; va comunque svolto il procedimento.\n\nNon fare: pag. 2–4 colonna destra; pag. 5 es. 329–336; pag. 6 eq. 337–344.\nLe figure (pag. 1 e pag. 6) stanno nel PDF. Tocca «Cosa chiede il prof» sotto ogni esercizio per testo e risultato blu.",
       tasks: [
@@ -367,12 +415,14 @@ const DATA = {
           id: "ma-teoria",
           title: "Ripassata la teoria (goniometria, trigo, exp, log)",
           files: [F.maOb],
+          alerts: [A.due14],
           req: "Ripassare tutta la teoria dell’anno. Dal file obiettivi minimi 4A linguistico (allegato Classroom):\n\nGoniometria: grafici delle funzioni elementari, relazioni fondamentali, archi associati, equazioni goniometriche elementari.\nTrigonometria: teoremi in problemi semplici.\nEsponenziali e logaritmi: grafici elementari, proprietà dei logaritmi, equazioni e disequazioni semplici.",
         },
         {
           id: "ma-p1",
           title: "Pag. 1 — grafici 42–44 + problemi 102 e 103",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Sezione esponenziali. 42–44: «LEGGI IL GRAFICO» — nelle figure sono disegnati grafici di funzioni esponenziali; scrivi le equazioni corrispondenti (figure nel PDF). Poi i problemi 102 (Piegare all’infinito) e 103 (Larve e anatre).",
           children: items("ma-p1", [
             [42, "Grafico esponenziale decrescente", "LEGGI IL GRAFICO (figura nel PDF). Grafico decrescente; passa per A(2, 1/9) e in genere per (0, 1). Scrivi l’equazione della funzione esponenziale."],
@@ -389,6 +439,7 @@ const DATA = {
           id: "ma-p2",
           title: "Pag. 2 — eq. 160–170, diseq. 267–272, log 101–106",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Colonna sinistra: risolvi le equazioni esponenziali 160–170 e le disequazioni 267–272. Poi, sezione «per tutti»: semplifica i logaritmi 101–106. I risultati blu nel PDF sono solo autocontrollo.",
           children: items("ma", [
             [160, "4^x = 2^x − 2", "Risolvi (colonna sinistra). Autocontrollo PDF: impossibile."],
@@ -420,6 +471,7 @@ const DATA = {
           id: "ma-p3",
           title: "Pag. 3 — 281–290, 373–376, goniometria 123–125 e 131–134",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Colonna sinistra: equazioni e disequazioni logaritmiche 281–290 e 373–376. Poi, per tutti: calcola i valori goniometrici 123–125; dati seno/coseno e quadrante, trova l’altra funzione (131–134).",
           children: items("ma", [
             [281, "log₂ x = −5", "Risolvi. Autocontrollo PDF: 1/32."],
@@ -449,6 +501,7 @@ const DATA = {
           id: "ma-p4",
           title: "Pag. 4 — tan, identità, semplificazioni",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Colonna sinistra: calcola tan α (176–178); verifica le identità 229–231; semplifica 292–295, 143–145, 12–15.",
           children: items("ma", [
             [176, "tan α, sin=4/5", "Calcola tan α, dato sin α = 4/5 e π/2 < α < π. Autocontrollo PDF: −4/3."],
@@ -474,6 +527,7 @@ const DATA = {
           id: "ma-p5",
           title: "Pag. 5 — eq. 308–317, problemi 55–56",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Per tutti: risolvi le equazioni goniometriche 308–317 (k ∈ ℤ) e i problemi sui triangoli rettangoli 55–56. NON fare 329–336 (solo debito).",
           children: items("ma", [
             [308, "tan²(x+π/3) − 3 = 0", "Risolvi, k ∈ ℤ. Autocontrollo PDF: kπ ; π/3 + kπ."],
@@ -495,6 +549,7 @@ const DATA = {
           title: "Pag. 6 — triangoli 16–22 e 41–46",
           hint: "41–46: usa le figure del PDF.",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Per tutti. NON fare le equazioni 337–344 (blocco debito).\nRisolvi il triangolo ABC, rettangolo in C. Primo teorema: cateto = ipotenusa · sen(angolo opposto) = ipotenusa · cos(angolo adiacente). α in A, β in B, γ = 90° in C; a opposto ad A, b opposto a B, c ipotenusa.\n41–46: misure sui disegni a pagina 6 del PDF.",
           children: items("ma", [
             [16, "b=15, α=30°", "Risolvi ABC, rettangolo in C. Autocontrollo PDF: c = 10√3 ; a = 5√3 ; β = 60°."],
@@ -516,6 +571,7 @@ const DATA = {
           id: "ma-consegna",
           title: "Consegnato su Classroom",
           files: [F.maPdf],
+          alerts: [A.due14],
           req: "Compito Classroom «esercizi per le vacanze», 100 punti. Scadenza: 14 settembre 2026, ore 08:00. Svolgi il procedimento, non copiare solo i risultati blu.",
         },
       ],
@@ -528,6 +584,7 @@ const DATA = {
       blurb: "4 testi × 3–4 volte, in cinese. Zu: dettato + 2 righe/giorno fino al 12 settembre.",
       due: "12 set (caratteri)",
       dueDate: "2026-09-12",
+      alerts: [A.due12, A.oralZh, A.dictZu],
       ask: "Due prof, due lavori. Messaggio Di Vincenzo da far girare dai rappresentanti; commentare «ricevuto».\n\nDI VINCENZO (testo integrale):\n«Vi invio due podcast e due letture. I podcast hanno anche la versione scritta che potete consultare, mentre le letture hanno pop up su ogni carattere che mostra la traduzione delle parole, potete scoprire il pinyin e la traduzione in inglese.\nL’obiettivo non è sapere di cosa parlano questi contenuti, ma ascoltare e leggere in cinese per migliorare il vostro livello, quindi fatelo con questa consapevolezza. Al rientro dalle vacanze vi chiederò di riassumere in cinese i contenuti sia dei podcast che dei testi e vi chiederò delle opinioni al riguardo (mi baserò sulle domande fatte dal conduttore alla fine delle puntate per quanto riguarda i podcast). Quindi preparatevi sulla parte in cinese, facendo glossari, riassunti e provando a ripetere i contenuti (usando il lessico che avete già e aggiungendo lessico nuovo che avrete imparato dalla lettura e dall’ascolto di questi testi). Per raggiungere l’obiettivo sarà necessario ascoltare e leggere almeno 3-4 volte i podcast e i testi.\nOltre a ciò, aprire il file del programma svolto e ripassare tutti i caratteri studiati lo scorso anno (Unità 7 vol. 2 e le letture del vol. 3). La prof. Zu farà il dettato al rientro.»\n\nZU: 2 righe di caratteri al giorno dall’ultima firma sul quaderno fino al 12 settembre (compreso il recupero da marzo/aprile, non solo da oggi).",
       tasks: [
         {
@@ -535,6 +592,7 @@ const DATA = {
           title: "Podcast 面子 — 3–4 volte + glossario + riassunto + opinione",
           who: "Di Vincenzo",
           href: "https://teatimechinese.com/podcast/chinese/22-the-face-culture-in-china",
+          alerts: [A.oralZh],
           req: "第22集：中国的“面子文化” (Beginner, 15:24). C’è il transcript sul sito.\n\nObiettivo: ascoltare in cinese, non solo «sapere di cosa parla». Almeno 3–4 volte.\nDa preparare in cinese: glossario (carattere + pinyin + significato) + riassunto + opinione.\nAl rientro Di Vincenzo chiederà riassunto e opinioni; per i podcast userà le domande del conduttore in fondo alla puntata.\nTemi da tenere pronti: 什么是面子？什么时候有面子 / 没面子？你觉得面子重要吗？",
         },
         {
@@ -542,6 +600,7 @@ const DATA = {
           title: "Podcast 知音 — 3–4 volte + glossario + riassunto + domande",
           who: "Di Vincenzo",
           href: "https://teatimechinese.com/podcast/chinese/18-do-you-have-a-best-buddy",
+          alerts: [A.oralZh],
           req: "第18集：你有知音吗？ (Intermediate, 11:22). 知音 = un amico che ti capisce davvero (storia di 伯牙 e 钟子期).\n\nAlmeno 3–4 ascolti + transcript + glossario + riassunto in cinese.\nDomande del conduttore (fine puntata) — Di Vincenzo si baserà su queste; prepara le risposte in cinese:\n• 你有一个非常非常好的朋友吗？你有一个真正明白你的朋友吗？\n• 你有知音吗？如果有，你们是怎么认识的？你们已经认识多久了？\n• 如果你没有知音：你觉得知音很难找到吗？你觉得有一个知音是一件很重要的事情吗？",
         },
         {
@@ -549,6 +608,7 @@ const DATA = {
           title: "Lettura 说谎对不对 — 3–4 volte + glossario + riassunto + opinione",
           who: "Di Vincenzo",
           href: "https://chinesereadingpractice.com/2026/05/01/essay-%E8%AF%B4%E8%B0%8E%E5%AF%B9%E4%B8%8D%E5%AF%B9%EF%BC%9F-is-lying-right-or-wrong/",
+          alerts: [A.oralZh],
           req: "说谎对不对？ (Intermediate). Saggio: mentire è sempre sbagliato? 善意的谎言; esempio WWII. Popup su ogni carattere (pinyin + inglese).\n\nLeggere almeno 3–4 volte. In cinese: glossario + riassunto + opinione (说谎永远不对吗？善意的谎言可以吗？).\nVocabolario chiave: 说谎 shuōhuǎng, 善意 shànyì, 谎言 huǎngyán, 诚实 chéngshí.",
         },
         {
@@ -556,30 +616,35 @@ const DATA = {
           title: "Lettura 武则天 — 3–4 volte + glossario + riassunto + opinione",
           who: "Di Vincenzo",
           href: "https://chinesereadingpractice.com/2026/03/26/%E6%AD%A6%E5%88%99%E5%A4%A9%EF%BC%9A%E4%B8%AD%E5%9B%BD%E5%94%AF%E4%B8%80%E7%9A%84%E5%A5%B3%E7%9A%87%E5%B8%9D-wu-zetian-chinas-only-female-emperor/",
+          alerts: [A.oralZh],
           req: "武则天：中国唯一的女皇帝 (Intermediate). Nata nel 624, 皇帝 nel 690, dinastia 周, muore nel 705.\n\nLeggere almeno 3–4 volte. In cinese: glossario + riassunto della vita + opinione (你觉得武则天怎么样？).\nVocabolario chiave: 皇帝 huángdì, 皇后 huánghòu, 权力 quánlì, 统治 tǒngzhì.",
         },
         {
           id: "zh-voce",
           title: "Ripetuti a voce i 4 contenuti",
           who: "Di Vincenzo",
+          alerts: [A.oralZh],
           req: "Dal messaggio: «provando a ripetere i contenuti (usando il lessico che avete già e aggiungendo lessico nuovo)». Non è un file da consegnare: è preparazione per l’orale al rientro (riassunto + opinioni in cinese).",
         },
         {
           id: "zh-prog",
           title: "Aperto il programma svolto",
           who: "Di Vincenzo / Zu",
+          alerts: [A.dictZu],
           req: "«Aprire il file del programma svolto» (Classroom / materiale della prof) e usarlo per il ripasso caratteri. La Zu farà il dettato al rientro.",
         },
         {
           id: "zh-u7",
           title: "Ripassati i caratteri Unità 7 vol. 2",
           who: "Zu (indicato da Di Vincenzo)",
+          alerts: [A.dictZu],
           req: "Ripassare tutti i caratteri studiati lo scorso anno: Unità 7 del volume 2. Al rientro dettato della prof. Zu.",
         },
         {
           id: "zh-vol3",
           title: "Ripassati i caratteri delle letture vol. 3",
           who: "Zu (indicato da Di Vincenzo)",
+          alerts: [A.dictZu],
           req: "Stesso ripasso: tutti i caratteri delle letture del volume 3. Servono per il dettato della Zu.",
         },
         {
@@ -587,6 +652,7 @@ const DATA = {
           title: "Trovata l’ultima firma della Zu sul quaderno",
           hint: "Poi usa la scheda Caratteri: 2 righe per ogni giorno fino al 12/09.",
           who: "la Zu",
+          alerts: [A.due12],
           req: "Richiesta della Zu: scrivere 2 righe di caratteri cinesi per OGNI giorno, dall’ultimo giorno in cui ha messo la firma sul quaderno (circa marzo/aprile 2026) fino al 12 settembre incluso.\n\nNon è «2 righe in tutto»: è 2 righe × ogni giorno mancante, compreso il recupero. Il giorno successivo alla firma è il primo da fare. Caratteri: Unità 7 vol. 2, letture vol. 3, e/o quelli dei testi estivi.\nApri la scheda Caratteri qui sotto, metti la data della firma, spunta i giorni.",
         },
       ],
