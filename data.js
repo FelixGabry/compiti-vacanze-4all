@@ -1,14 +1,28 @@
 /* Elenco compiti 4ALL linguistico — estate 2026 + richieste dei prof */
 function items(prefix, rows) {
   return rows.map((row) => {
-    const [num, title, req] = row;
+    const [num, title, req, files] = row;
     return {
       id: prefix + "-" + num,
       title: num + ". " + title,
       ...(req ? { req } : {}),
+      ...(files ? { files } : {}),
     };
   });
 }
+
+const F = {
+  itLetture: { name: "Letture estive quarta.pdf", href: "./file/it-letture-estive.pdf" },
+  itTracce: { name: "P000_ORD25 — tracce maturità.pdf", href: "./file/it-tracce-maturita.pdf" },
+  itCalvino: { name: "Scheda Calvino.pdf", href: "./file/it-calvino-scheda.pdf" },
+  enModulo: { name: "Modulo compiti estivi.docx", href: "./file/en-modulo.docx" },
+  enScheda: { name: "Scheda Dickens.pdf", href: "./file/en-dickens-scheda.pdf" },
+  enProg: { name: "Programma svolto Manfredda.pdf", href: "./file/en-programma.pdf" },
+  esScheda: { name: "Scheda Sepúlveda.pdf", href: "./file/es-scheda.pdf" },
+  fiPdf: { name: "4ALL - fisica.pdf", href: "./file/fi-esercizi.pdf" },
+  maPdf: { name: "4ALL - matematica.pdf", href: "./file/ma-esercizi.pdf" },
+  maOb: { name: "Obiettivi minimi matematica.pdf", href: "./file/ma-obiettivi.pdf" },
+};
 
 const DATA = {
   className: "4ALL linguistico",
@@ -22,50 +36,59 @@ const DATA = {
       points: "2 × 100 punti",
       blurb: "3 libri dalla lista + 3 temi di maturità. Niente AI.",
       due: "inizio scuola",
+      files: [F.itLetture, F.itTracce],
       ask: "Due lavori su Classroom, ciascuno da 100 punti.\n\n1) LETTURE ESTIVE: «Leggete almeno tre libri tra quelli indicati.» Lista ufficiale: Letture estive quarta.pptx.pdf. Li hai già scelti: Calvino, Balzano, Pirandello. Vanno letti per intero. Non c’è relazione da consegnare: serve saperne parlare.\n\n2) TEMI: «Svolgete un tema di tipologia A, uno di B e uno di C, scegliendo tra le tracce proposte alla scorsa maturità. Niente AI, lavorate con lo scopo di confrontarvi con una vera prova dell’esame di stato. Consegnate i vostri lavori qui in word entro l’inizio della scuola.» Allegato: P000_ORD25.pdf (sessione ordinaria 2025).",
       tasks: [
         {
           id: "it-calvino",
           title: "Letto Calvino — Il sentiero dei nidi di ragno",
           hint: "Scheda già pronta in cartella Italiano.",
+          files: [F.itLetture, F.itCalvino],
           req: "Compito Classroom «Letture estive» (100 punti). Testo della prof: «Leggete almeno tre libri tra quelli indicati.»\n\nQuesto è il 1° dei tre scelti. Pin, dieci anni, orfano; dopo l’8 settembre 1943 viene coinvolto nella Resistenza in Liguria e cerca un amico a cui rivelare il segreto dei nidi di ragno.\n\nVa letto per intero prima dell’inizio della scuola. Nessuna scheda da consegnare: a settembre serve saperne parlare (trama, personaggi, stile).",
         },
         {
           id: "it-calvino-oral",
           title: "So raccontare Calvino (trama, personaggi, stile)",
+          files: [F.itCalvino],
           req: "Non è un compito Classroom a sé. La prof chiede di leggere i libri: in classe ci si aspetta che tu sappia raccontarli, come per una verifica o un orale.\n\nTieni pronto: chi è Pin; dove è ambientato; cosa succede dopo l’8 settembre; i personaggi principali; lo stile di Calvino (primo romanzo, Resistenza vista da un bambino).",
         },
         {
           id: "it-balzano",
           title: "Letto Balzano — Resto qui",
+          files: [F.itLetture],
           req: "2° libro della lista ufficiale (Classroom, 100 punti). Stesso vincolo: leggerlo per intero, niente relazione da consegnare.\n\nTrina, di Curon in Sudtirolo, resiste ai fascisti che bandiscono il tedesco, fugge in montagna col marito disertore, affronta l’inondazione del paese per la diga. Si difende con le parole.",
         },
         {
           id: "it-pirandello",
           title: "Letto Pirandello — Il fu Mattia Pascal",
+          files: [F.itLetture],
           req: "3° libro della lista ufficiale (Classroom, 100 punti). Stesso vincolo: leggerlo per intero.\n\n1904. Mattia Pascal, dopo una lite in famiglia, vince a Montecarlo e, creduto morto per un errore di identificazione, finge la propria morte e tenta una nuova vita a Roma come Adriano Meis.",
         },
         {
           id: "it-tema-a",
           title: "Tema tipologia A (A1 o A2) in Word",
           hint: "Niente AI. Lo scrivi tu.",
+          files: [F.itTracce],
           req: "Testo Classroom: un tema di tipologia A (analisi e interpretazione di un testo letterario italiano), scegliendo tra le tracce della maturità 2025, sessione ordinaria (P000_ORD25.pdf). Niente AI. File Word. Inizio scuola.\n\nScegli UNA delle due:\n\n• A1 — Pier Paolo Pasolini, poesia Appendice I a «Dal diario» (1943-1944). Comprensione e analisi: 4 domande (contenuto e figure di stile; relazione natura/poeta; funzione della luna; significato del canto dei grilli) + interpretazione sul trascorrere del tempo e sulla relazione con la natura, anche con altri autori o arti.\n\n• A2 — Giuseppe Tomasi di Lampedusa, Il Gattopardo: prima visita di Angelica, da fidanzata, alla famiglia Salina. Comprensione e analisi: 4 domande (riassunto; i tre personaggi; atteggiamenti di Angelica e don Calogero verso il Principe; come si capisce che don Calogero mente) + interpretazione sui rapporti aristocrazia/borghesia e sulle inquietudini nei cambiamenti politici.\n\nRiferimento della prova ufficiale: 6 ore; dizionario italiano consentito in sede d’esame. La prof non impone la durata per le vacanze, ma il lavoro deve essere tuo, come una vera prima prova.",
         },
         {
           id: "it-tema-b",
           title: "Tema tipologia B (B1, B2 o B3) in Word",
           hint: "Niente AI. Lo scrivi tu.",
+          files: [F.itTracce],
           req: "Tipologia B: analisi e produzione di un testo argomentativo. Scegli UNA delle tre tracce della maturità 2025 (P000_ORD25.pdf). Niente AI. Word. Inizio scuola.\n\n• B1 — Piers Brendon, Gli anni trenta. New Deal di Roosevelt (banche, legislazione di emergenza, discorsi radiofonici). 4 domande di comprensione/analisi + produzione sul rapporto tra leader politici e cittadini attraverso i mezzi di comunicazione di massa di oggi (radio, TV, giornali, social).\n\n• B2 — Riccardo Maccioni, «Rispetto» parola Treccani 2024 (Avvenire, 17/12/2024). Il rispetto come attenzione, stima, cura; la mancanza di rispetto come radice della violenza. 4 domande + produzione: il tuo punto di vista, testo coerente e coeso.\n\n• B3 — Telmo Pievani, Un quarto d’era (geologica) di celebrità. Antropocene: nel 2020 la massa degli oggetti umani ha eguagliato la biomassa. 4 domande + produzione sull’impatto ambientale ed economico della «tecnosfera» e su possibili soluzioni.",
         },
         {
           id: "it-tema-c",
           title: "Tema tipologia C (C1 o C2) in Word",
           hint: "Niente AI. Lo scrivi tu.",
+          files: [F.itTracce],
           req: "Tipologia C: riflessione critica espositivo-argomentativa su tematiche di attualità. Scegli UNA delle due. Niente AI. Word. Inizio scuola. Titolo complessivo + paragrafi titolati.\n\n• C1 — Paolo Borsellino, I giovani, la mia speranza (Epoca, 14/10/1992). Identità di Palermo, consenso alla mafia, ottimismo legato ai giovani. Riflettere, da studente e cittadino, sul messaggio di Borsellino e sul valore per i giovani di oggi.\n\n• C2 — Anna Meldolesi e Chiara Lalli (7-Sette / Corriere della Sera, 13/12/2024). L’indignazione come motore dei social: spesso accompagna contenuti discutibili e non porta ad approfondire. Riflettere su questa caratteristica dei social.",
         },
         {
           id: "it-consegna",
           title: "Temi consegnati su Classroom",
+          files: [F.itTracce],
           req: "Consegna: file Word su Classroom entro l’inizio della scuola. Vincolo esplicito: «Niente AI».\n\nI libri non si consegnano: si leggono. I temi sì. Sono due compiti Classroom distinti (letture 100 punti + temi 100 punti).",
         },
       ],
@@ -78,13 +101,15 @@ const DATA = {
       points: "lettorato 100 punti",
       blurb: "Dickens obbligatorio (verifica a settembre) + Unit 6 e due video.",
       due: "inizio scuola",
+      files: [F.enModulo, F.enScheda, F.enProg],
       ask: "Due compiti Classroom, senza data di consegna impostata (da fare per l’inizio della scuola).\n\n1) MANFREDDA — SUMMER HOMEWORK & PROGRAMMA SVOLTO (modulo 03/06/2026):\n«Durante il periodo estivo gli studenti dovranno svolgere con cura le attività indicate di seguito, con l’obiettivo di consolidare le competenze linguistiche acquisite nel corso dell’anno.\nLettura obbligatoria: A Christmas Carol by Charles Dickens (PDF su Google Classroom).\nGli esercizi sono facoltativi. Ciò che resta obbligatoria è la lettura del libro, che sarà oggetto di valutazione a settembre e sarà parte del programma di quinta. Fissa quindi bene la trama, i personaggi e le tematiche che emergono dalla lettura prendendo appunti sul quaderno.»\nNiente debito: per te vale solo lettura + appunti. La fascia «sufficiente» (Oxford Grammar extra) è extra solo se hai ancora forti incertezze di grammatica.\n\n2) LETTORATO — SUMMER HOMEWORK (100 punti): esercizi Performer B2 Unit 6 «Save the Earth» + due video con domande.",
       tasks: [
         {
           id: "en-dickens-read",
           title: "Letto A Christmas Carol (Black Cat)",
           who: "Manfredda",
-          req: "Modulo compiti estivi, 03/06/2026: «Lettura obbligatoria: A Christmas Carol by Charles Dickens (PDF su Google Classroom).»\n\nEdizione: Black Cat, 2003, Peter Foreman, 6 capitoli. Sarà oggetto di valutazione a settembre e parte del programma di quinta. Va letto per intero.",
+          files: [F.enModulo],
+          req: "Modulo compiti estivi, 03/06/2026: «Lettura obbligatoria: A Christmas Carol by Charles Dickens (PDF su Google Classroom).»\n\nEdizione: Black Cat, 2003, Peter Foreman, 6 capitoli. Sarà oggetto di valutazione a settembre e parte del programma di quinta. Va letto per intero. Il reader completo sta su Classroom: qui non lo allego perché è un libro.",
         },
         {
           id: "en-dickens-notes",
@@ -92,12 +117,14 @@ const DATA = {
           hint: "Scheda già fatta. Copiali sul quaderno.",
           done: true,
           who: "Manfredda",
+          files: [F.enScheda, F.enModulo],
           req: "Testo letterale del modulo: «Fissa quindi bene la trama, i personaggi e le tematiche che emergono dalla lettura prendendo appunti sul quaderno.»\n\nObbligatorio: plot, characters, themes. Gli appunti sul telefono/PC non bastano: il prof chiede il quaderno. La scheda in cartella Inglese è già pronta da copiare.",
         },
         {
           id: "en-dickens-oral",
           title: "So raccontare i 6 capitoli ad alta voce (inglese)",
           who: "Manfredda",
+          files: [F.enScheda],
           req: "Il libro «sarà oggetto di valutazione a settembre». Non è un esercizio da consegnare: è per la prova. Devi saper raccontare i 6 capitoli in inglese (Marley, i tre spiriti, il cambiamento di Scrooge) senza leggere.",
         },
         {
@@ -105,6 +132,7 @@ const DATA = {
           title: "Esercizi del reader Dickens",
           optional: true,
           who: "Manfredda",
+          files: [F.enModulo],
           req: "Testo del modulo: «Gli esercizi sono facoltativi.» Non sono obbligatori. Se li fai, sono quelli dentro il reader Black Cat di A Christmas Carol.",
         },
         {
@@ -160,16 +188,19 @@ const DATA = {
       who: "la prof (finora solo dalla chat)",
       blurb: "Sepúlveda: due storie nello stesso volume. In chat risulta solo la lettura.",
       due: "inizio scuola",
+      files: [F.esScheda],
       ask: "Fonte: chat di classe, non un compito Classroom ufficiale. Elisa ha mandato la copertina; Aurora il PDF (103 pp., Tusquets).\n\nLibro: Luis Sepúlveda, Diario de un killer sentimental seguido de Yacaré (due novelas cortas nello stesso volume).\n\nDalla chat NON risultano: data di consegna, verifica, relazione, appunti obbligatori, extra per debito. Finché non arriva il post della prof, il compito è leggere entrambe le storie in spagnolo.\n\nGli appunti (trama, personaggi, temi) non sono richiesti per iscritto: servono se a settembre c’è orale o verifica.",
       tasks: [
         {
           id: "es-diario",
           title: "Letto Diario de un killer sentimental",
+          files: [F.esScheda],
           req: "Prima storia del volume. Un killer a pagamento infrange le regole della professione perché si innamora. La caccia alla vittima lo porta da Parigi a Madrid, da Istanbul al Messico.\n\nVa letto in spagnolo. La chat non chiede altro di esplicito sulla prima storia.",
         },
         {
           id: "es-yacare",
           title: "Letto Yacaré",
+          files: [F.esScheda],
           req: "Seconda storia dello stesso volume: va letta anche questa (non basta la prima). Un investigatore di una compagnia di assicurazioni (ex poliziotto) lascia Zurigo per Milano e finisce nel mondo degli indios anaré, nel sud del Brasile. Al centro i yacarés (piccoli coccodrilli) e temi di Sepúlveda: ambiente, specie protette, scontro tra culture.",
         },
         {
@@ -178,10 +209,12 @@ const DATA = {
           hint: "Scheda già fatta, in spagnolo semplice.",
           done: true,
           req: "Non risultano obbligatori dalla chat. Li tieni per te se a settembre c’è verifica o orale. Scheda già pronta in cartella Spagnolo (12 sezioni, spagnolo semplice): da rileggere, non da consegnare.",
+          files: [F.esScheda],
         },
         {
           id: "es-oral",
           title: "So raccontare le 12 sezioni ad alta voce (spagnolo)",
+          files: [F.esScheda],
           req: "Non è una consegna della prof (la chat non la menziona). È preparazione: saper raccontare le due storie in spagnolo, senza guardare gli appunti.",
         },
       ],
@@ -219,22 +252,26 @@ const DATA = {
       blurb: "Teoria + esercizi in nero + Balbi con relazione. Consegna 14 settembre ore 08:00.",
       due: "14 set 08:00",
       dueDate: "2026-09-14",
+      files: [F.fiPdf],
       ask: "Classroom: «lavoro estivo di fisica» — 100 punti. Consegna 14 settembre ore 08:00. «Seguire le indicazioni presenti nel file allegato» (4ALL - fisica.pdf).\n\nPost del 17 giugno: «ho inserito i compiti delle vacanze differenziandoli tra compiti e esercizi aggiuntivi per chi ha il debito. Gli esercizi aggiuntivi per chi ha il debito sono assegnati anche agli studenti che hanno raggiunto la sufficienza con aiuto.»\n\nTre parti:\n1) Ripasso di teoria di tutto il programma realmente svolto in quarta (appunti o libro).\n2) Esercizi dal PDF: senza debito fai SOLO quelli digitati in nero. Debito o sufficienza con aiuto: neri + evidenziati. I colori si vedono solo nel PDF originale.\n3) Leggere Cercatori di meraviglia (Amedeo Balbi) e fare una piccola relazione.\n\nTu non hai debito: solo neri + libro + relazione. Tocca «Cosa chiede il prof» sotto ogni esercizio per il testo completo (così non ti serve il PDF in tasca).",
       tasks: [
         {
           id: "fi-teoria",
           title: "Ripassata la teoria di quarta",
+          files: [F.fiPdf],
           req: "Richiesta nel PDF: ripassare la teoria di tutti gli argomenti presenti nel programma realmente svolto di quarta (appunti oppure libro).\n\nArgomenti che ricorrono negli esercizi: pressione e fluidi (Pascal, Torricelli, spinta idrostatica); momento angolare e d’inerzia; moto circolare, caduta, pendolo, energia, lavoro; gravità, orbite, fuga, buchi neri; molle e montagne russe; suono (Doppler, intensità, dB); ottica (riflessione, rifrazione, specchi, onde EM).",
         },
         {
           id: "fi-colori",
           title: "Controllato nel PDF quali esercizi sono in nero",
+          files: [F.fiPdf],
           req: "Il prof differenzia neri / evidenziati. Questo elenco ha tutti e 48 i testi, ma i colori NON si vedono qui. Prima di spuntare «svolti i neri», apri 4ALL - fisica.pdf e segna quali sono in nero. Gli esercizi 13 e 32 hanno una figura: usala dal PDF.",
         },
         {
           id: "fi-neri",
           title: "Svolti gli esercizi in nero",
           hint: "Spunta sotto solo quelli neri del PDF. Gli evidenziati non ti spettano.",
+          files: [F.fiPdf],
           req: "Regola: senza debito solo i problemi digitati in nero. Svolgi il procedimento (non basta il risultato). 13 e 32: c’è la figura nel PDF.",
           children: items("fi", [
             [1, "Cubo sotto vuoto — forza sul coperchio", "Un cubo di 1 m di spigolo è sottoposto alla pressione standard e viene chiuso con un coperchio quadrato delle stesse dimensioni dello spigolo. Una volta chiuso dal cubo viene aspirata tutta l’aria. Calcola la forza necessaria per aprire il cubo."],
@@ -291,6 +328,7 @@ const DATA = {
           id: "fi-evidenziati",
           title: "Esercizi evidenziati (debito / sufficienza con aiuto)",
           optional: true,
+          files: [F.fiPdf],
           req: "Post Classroom del 17 giugno: gli extra evidenziati sono per chi ha il debito formativo o ha preso la sufficienza con aiuto. Tu non hai debito: non ti spettano. Restano nascosti finché non premi Facoltativi.",
         },
         {
@@ -302,11 +340,13 @@ const DATA = {
           id: "fi-relazione",
           title: "Scritta la piccola relazione sul libro",
           hint: "La scrivi tu. Consegna insieme al lavoro estivo.",
+          files: [F.fiPdf],
           req: "Nel PDF: «Leggere e fare una piccola relazione del libro». Il prof non precisa lunghezza né formato: relazione breve, chiara, tua. Consegnarla insieme al lavoro estivo entro il 14 settembre ore 08:00. Non farla scrivere all’AI: è parte del compito da 100 punti.",
         },
         {
           id: "fi-consegna",
           title: "Consegnato il lavoro su Classroom",
+          files: [F.fiPdf],
           req: "Compito Classroom «lavoro estivo di fisica», 100 punti. Scadenza: 14 settembre 2026, ore 08:00. Insieme: esercizi (neri) + piccola relazione sul Balbi.",
         },
       ],
@@ -320,16 +360,19 @@ const DATA = {
       blurb: "Teoria + colonna sinistra / «per tutti». Consegna 14 settembre ore 08:00.",
       due: "14 set 08:00",
       dueDate: "2026-09-14",
+      files: [F.maPdf, F.maOb],
       ask: "Classroom: «esercizi per le vacanze» — 100 punti. Consegna 14 settembre ore 08:00. «Segui le istruzioni presenti nel file allegato» (4ALL - matematica.pdf).\n\nStesso post del 17 giugno di fisica: extra per debito e per chi ha preso la sufficienza con aiuto.\n\nCosa fare (niente debito):\n1) Ripassare tutta la teoria dell’anno (goniometria, trigonometria, esponenziali e logaritmi — obiettivi minimi 4A linguistico).\n2) Svolgere gli esercizi della colonna di sinistra e le sezioni «per tutti». La colonna di destra e i blocchi «solo debito» NON ti spettano.\n\nA destra di molti esercizi ci sono già i risultati in blu: autocontrollo; va comunque svolto il procedimento.\n\nNon fare: pag. 2–4 colonna destra; pag. 5 es. 329–336; pag. 6 eq. 337–344.\nLe figure (pag. 1 e pag. 6) stanno nel PDF. Tocca «Cosa chiede il prof» sotto ogni esercizio per testo e risultato blu.",
       tasks: [
         {
           id: "ma-teoria",
           title: "Ripassata la teoria (goniometria, trigo, exp, log)",
+          files: [F.maOb],
           req: "Ripassare tutta la teoria dell’anno. Dal file obiettivi minimi 4A linguistico (allegato Classroom):\n\nGoniometria: grafici delle funzioni elementari, relazioni fondamentali, archi associati, equazioni goniometriche elementari.\nTrigonometria: teoremi in problemi semplici.\nEsponenziali e logaritmi: grafici elementari, proprietà dei logaritmi, equazioni e disequazioni semplici.",
         },
         {
           id: "ma-p1",
           title: "Pag. 1 — grafici 42–44 + problemi 102 e 103",
+          files: [F.maPdf],
           req: "Sezione esponenziali. 42–44: «LEGGI IL GRAFICO» — nelle figure sono disegnati grafici di funzioni esponenziali; scrivi le equazioni corrispondenti (figure nel PDF). Poi i problemi 102 (Piegare all’infinito) e 103 (Larve e anatre).",
           children: items("ma-p1", [
             [42, "Grafico esponenziale decrescente", "LEGGI IL GRAFICO (figura nel PDF). Grafico decrescente; passa per A(2, 1/9) e in genere per (0, 1). Scrivi l’equazione della funzione esponenziale."],
@@ -345,6 +388,7 @@ const DATA = {
         {
           id: "ma-p2",
           title: "Pag. 2 — eq. 160–170, diseq. 267–272, log 101–106",
+          files: [F.maPdf],
           req: "Colonna sinistra: risolvi le equazioni esponenziali 160–170 e le disequazioni 267–272. Poi, sezione «per tutti»: semplifica i logaritmi 101–106. I risultati blu nel PDF sono solo autocontrollo.",
           children: items("ma", [
             [160, "4^x = 2^x − 2", "Risolvi (colonna sinistra). Autocontrollo PDF: impossibile."],
@@ -375,6 +419,7 @@ const DATA = {
         {
           id: "ma-p3",
           title: "Pag. 3 — 281–290, 373–376, goniometria 123–125 e 131–134",
+          files: [F.maPdf],
           req: "Colonna sinistra: equazioni e disequazioni logaritmiche 281–290 e 373–376. Poi, per tutti: calcola i valori goniometrici 123–125; dati seno/coseno e quadrante, trova l’altra funzione (131–134).",
           children: items("ma", [
             [281, "log₂ x = −5", "Risolvi. Autocontrollo PDF: 1/32."],
@@ -403,6 +448,7 @@ const DATA = {
         {
           id: "ma-p4",
           title: "Pag. 4 — tan, identità, semplificazioni",
+          files: [F.maPdf],
           req: "Colonna sinistra: calcola tan α (176–178); verifica le identità 229–231; semplifica 292–295, 143–145, 12–15.",
           children: items("ma", [
             [176, "tan α, sin=4/5", "Calcola tan α, dato sin α = 4/5 e π/2 < α < π. Autocontrollo PDF: −4/3."],
@@ -427,6 +473,7 @@ const DATA = {
         {
           id: "ma-p5",
           title: "Pag. 5 — eq. 308–317, problemi 55–56",
+          files: [F.maPdf],
           req: "Per tutti: risolvi le equazioni goniometriche 308–317 (k ∈ ℤ) e i problemi sui triangoli rettangoli 55–56. NON fare 329–336 (solo debito).",
           children: items("ma", [
             [308, "tan²(x+π/3) − 3 = 0", "Risolvi, k ∈ ℤ. Autocontrollo PDF: kπ ; π/3 + kπ."],
@@ -447,6 +494,7 @@ const DATA = {
           id: "ma-p6",
           title: "Pag. 6 — triangoli 16–22 e 41–46",
           hint: "41–46: usa le figure del PDF.",
+          files: [F.maPdf],
           req: "Per tutti. NON fare le equazioni 337–344 (blocco debito).\nRisolvi il triangolo ABC, rettangolo in C. Primo teorema: cateto = ipotenusa · sen(angolo opposto) = ipotenusa · cos(angolo adiacente). α in A, β in B, γ = 90° in C; a opposto ad A, b opposto a B, c ipotenusa.\n41–46: misure sui disegni a pagina 6 del PDF.",
           children: items("ma", [
             [16, "b=15, α=30°", "Risolvi ABC, rettangolo in C. Autocontrollo PDF: c = 10√3 ; a = 5√3 ; β = 60°."],
@@ -467,6 +515,7 @@ const DATA = {
         {
           id: "ma-consegna",
           title: "Consegnato su Classroom",
+          files: [F.maPdf],
           req: "Compito Classroom «esercizi per le vacanze», 100 punti. Scadenza: 14 settembre 2026, ore 08:00. Svolgi il procedimento, non copiare solo i risultati blu.",
         },
       ],

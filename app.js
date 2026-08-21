@@ -124,6 +124,14 @@ function esc(s) {
   }[ch]));
 }
 
+function filesHtml(list) {
+  if (!list || !list.length) return "";
+  return `<div class="files">${list.map((f) => {
+    const ext = (f.href.split(".").pop() || "").toUpperCase();
+    return `<a class="file" href="${esc(f.href)}" target="_blank" rel="noopener"><span class="file-ext">${esc(ext)}</span>${esc(f.name)}</a>`;
+  }).join("")}</div>`;
+}
+
 function reqHtml(id, text, who) {
   if (!text) return "";
   const open = openReqs.has(id) ? " open" : "";
@@ -145,7 +153,7 @@ function bindReqs(root) {
 }
 
 function taskBlob(task) {
-  const parts = [task.title, task.hint, task.req, task.who];
+  const parts = [task.title, task.hint, task.req, task.who, ...(task.files || []).map((f) => f.name)];
   (task.children || []).forEach((c) => parts.push(c.title, c.req));
   return parts.filter(Boolean).join(" ").toLowerCase();
 }
@@ -340,6 +348,7 @@ function renderSubject() {
     <div class="bar page-bar"><i style="width:${Math.round(st.pct * 100)}%"></i></div>
     <p class="count">${st.done} / ${st.total}</p>
     ${st.done === st.total && st.total ? `<p class="celebrate">${esc(sub.short || sub.name)} fatto.</p>` : ""}
+    ${filesHtml(sub.files)}
   `;
   box.appendChild(head);
   if (sub.ask) {
@@ -371,6 +380,7 @@ function renderTask(task, sub) {
             <span>${esc(c.title)}</span>
           </label>
           ${reqHtml(c.id, c.req, c.who || task.who || sub.who)}
+          ${filesHtml(c.files || task.files)}
         </div>`).join("")}</div>`
     : "";
   const prog = parentProgress(task);
@@ -381,6 +391,7 @@ function renderTask(task, sub) {
         <div class="title">${esc(task.title)}${task.optional ? '<span class="badge">facoltativo</span>' : ""}${prog ? " · " + prog : ""}</div>
         ${task.hint ? `<div class="hint">${esc(task.hint)}</div>` : ""}
         ${reqHtml(task.id, task.req, task.who || sub.who)}
+        ${filesHtml(task.files)}
         ${task.href ? `<a class="link" href="${esc(task.href)}" target="_blank" rel="noopener">Apri link</a>` : ""}
         ${kids}
         <textarea class="note" data-note="${task.id}" placeholder="Nota su questo punto…">${esc(state.notes[task.id] || "")}</textarea>
