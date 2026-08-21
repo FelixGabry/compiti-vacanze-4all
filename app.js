@@ -124,12 +124,23 @@ function esc(s) {
   }[ch]));
 }
 
+function fileLink(f) {
+  const ext = (f.href.split(".").pop() || "").toUpperCase();
+  return `<a class="file" href="${esc(f.href)}" target="_blank" rel="noopener"><span class="file-ext">${esc(ext)}</span>${esc(f.name)}</a>`;
+}
+
 function filesHtml(list) {
   if (!list || !list.length) return "";
-  return `<div class="files">${list.map((f) => {
-    const ext = (f.href.split(".").pop() || "").toUpperCase();
-    return `<a class="file" href="${esc(f.href)}" target="_blank" rel="noopener"><span class="file-ext">${esc(ext)}</span>${esc(f.name)}</a>`;
-  }).join("")}</div>`;
+  const prof = list.filter((f) => f.from !== "ours");
+  const ours = list.filter((f) => f.from === "ours");
+  const blocks = [];
+  if (prof.length) {
+    blocks.push(`<div class="files-block"><div class="files-kicker">Allegati del prof</div><div class="files">${prof.map(fileLink).join("")}</div></div>`);
+  }
+  if (ours.length) {
+    blocks.push(`<div class="files-block ours"><div class="files-kicker">Da stampare (schede nostre)</div><div class="files">${ours.map(fileLink).join("")}</div></div>`);
+  }
+  return `<div class="files-wrap">${blocks.join("")}</div>`;
 }
 
 const KIND_LABEL = {

@@ -12,16 +12,16 @@ function items(prefix, rows) {
 }
 
 const F = {
-  itLetture: { name: "Letture estive quarta.pdf", href: "./file/it-letture-estive.pdf" },
-  itTracce: { name: "P000_ORD25 — tracce maturità.pdf", href: "./file/it-tracce-maturita.pdf" },
-  itCalvino: { name: "Scheda Calvino.pdf", href: "./file/it-calvino-scheda.pdf" },
-  enModulo: { name: "Modulo compiti estivi.docx", href: "./file/en-modulo.docx" },
-  enScheda: { name: "Scheda Dickens.pdf", href: "./file/en-dickens-scheda.pdf" },
-  enProg: { name: "Programma svolto Manfredda.pdf", href: "./file/en-programma.pdf" },
-  esScheda: { name: "Scheda Sepúlveda.pdf", href: "./file/es-scheda.pdf" },
-  fiPdf: { name: "4ALL - fisica.pdf", href: "./file/fi-esercizi.pdf" },
-  maPdf: { name: "4ALL - matematica.pdf", href: "./file/ma-esercizi.pdf" },
-  maOb: { name: "Obiettivi minimi matematica.pdf", href: "./file/ma-obiettivi.pdf" },
+  itLetture: { name: "Letture estive quarta.pdf", href: "./file/it-letture-estive.pdf", from: "prof" },
+  itTracce: { name: "P000_ORD25 — tracce maturità.pdf", href: "./file/it-tracce-maturita.pdf", from: "prof" },
+  itCalvino: { name: "Scheda Calvino.pdf", href: "./file/it-calvino-scheda.pdf", from: "ours" },
+  enModulo: { name: "Modulo compiti estivi.docx", href: "./file/en-modulo.docx", from: "prof" },
+  enScheda: { name: "Scheda Dickens.pdf", href: "./file/en-dickens-scheda.pdf", from: "ours" },
+  enProg: { name: "Programma svolto Manfredda.pdf", href: "./file/en-programma.pdf", from: "prof" },
+  esScheda: { name: "Scheda Sepúlveda.pdf", href: "./file/es-scheda.pdf", from: "ours" },
+  fiPdf: { name: "4ALL - fisica.pdf", href: "./file/fi-esercizi.pdf", from: "prof" },
+  maPdf: { name: "4ALL - matematica.pdf", href: "./file/ma-esercizi.pdf", from: "prof" },
+  maOb: { name: "Obiettivi minimi matematica.pdf", href: "./file/ma-obiettivi.pdf", from: "prof" },
 };
 
 const A = {
