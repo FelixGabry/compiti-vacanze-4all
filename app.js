@@ -2,7 +2,7 @@ const STORE = "compiti-4all-2026-v1";
 const CHAR_END = "2026-09-12";
 
 function empty() {
-  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false, page: "home" };
+  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false, focus30: true, page: "home" };
 }
 
 function load() {
@@ -41,9 +41,34 @@ function isDone(id) {
   return !!(found && found.done);
 }
 
+function isCore(id) {
+  return CORE.fi.includes(id) || CORE.ma.includes(id);
+}
+
+function parentHasCore(task) {
+  return !!(task.children && task.children.some((c) => isCore(c.id)));
+}
+
+function countedKids(task) {
+  if (!task.children) return [];
+  if (state.focus30 && parentHasCore(task)) {
+    return task.children.filter((c) => isCore(c.id) || isDone(c.id));
+  }
+  return task.children;
+}
+
+function goalKids(task) {
+  if (!task.children) return [];
+  if (state.focus30 && parentHasCore(task)) {
+    return task.children.filter((c) => isCore(c.id));
+  }
+  return task.children;
+}
+
 function isComplete(task) {
   if (task.children && task.children.length) {
-    return task.children.every((c) => isDone(c.id)) || isDone(task.id);
+    const kids = goalKids(task);
+    return kids.every((c) => isDone(c.id)) || isDone(task.id);
   }
   return isDone(task.id);
 }
@@ -54,7 +79,7 @@ function counts() {
     if (t.optional && !state.showOptional && !isDone(t.id)) return;
     total += 1;
     if (isComplete(t)) done += 1;
-    (t.children || []).forEach((c) => {
+    countedKids(t).forEach((c) => {
       total += 1;
       if (isDone(c.id)) done += 1;
     });
@@ -68,7 +93,7 @@ function subjectStats(sub) {
     if (t.optional && !state.showOptional && !isDone(t.id)) return;
     total += 1;
     if (isComplete(t)) done += 1;
-    (t.children || []).forEach((c) => {
+    countedKids(t).forEach((c) => {
       total += 1;
       if (isDone(c.id)) done += 1;
     });
@@ -78,8 +103,9 @@ function subjectStats(sub) {
 
 function parentProgress(task) {
   if (!task.children) return null;
-  const d = task.children.filter((c) => isDone(c.id)).length;
-  return d + "/" + task.children.length;
+  const kids = countedKids(task);
+  const d = kids.filter((c) => isDone(c.id)).length;
+  return d + "/" + kids.length;
 }
 
 function daysBetween(from, to) {
@@ -275,6 +301,7 @@ function nextUp() {
 
 function pageLabel() {
   if (state.page === "home") return "Home";
+  if (state.page === "piano") return "Piano Sardegna";
   if (state.page === "caratteri") return "Caratteri";
   if (state.page === "note") return "Note";
   const s = currentSubject();
@@ -295,6 +322,7 @@ function renderMenu() {
   const char = charCounts();
   const items = [
     { id: "home", label: "Home", meta: "" },
+    { id: "piano", label: "Piano Sardegna", meta: "10 giorni" },
     ...DATA.subjects.map((s) => {
       const st = subjectStats(s);
       const hot = !!(s.alerts && s.alerts.length) && !(st.total && st.done === st.total);
@@ -385,6 +413,11 @@ function renderHome() {
       `).join("")}
     </div>` : "";
   box.innerHTML = `
+    <button type="button" class="next-card piano-banner" data-go="piano">
+      <div class="ask-kicker">22 agosto — 1 settembre</div>
+      <div class="next-title">Piano Sardegna</div>
+      <div class="hint">Scegli al volo: cuffie, letto o tavolo. Cinese completo · 30 esercizi per materia · ebook legali.</div>
+    </button>
     ${watchHtml}
     ${nxt ? `
       <button type="button" class="next-card" data-go="${nxt.subject.id}">
@@ -462,8 +495,9 @@ function renderSubject() {
 function renderTask(task, sub) {
   const wrap = document.createElement("div");
   wrap.className = "task" + (isComplete(task) ? " done" : "");
-  const kids = task.children
-    ? `<div class="children">${task.children.map((c) => `
+  const kidsList = countedKids(task);
+  const kids = kidsList.length
+    ? `<div class="children">${kidsList.map((c) => `
         <div class="child">
           <label class="child-row">
             <input class="check" type="checkbox" data-id="${c.id}" ${isDone(c.id) ? "checked" : ""}>
@@ -496,12 +530,12 @@ function renderTask(task, sub) {
       const t = findTask(inp.dataset.id);
       state.checked[inp.dataset.id] = inp.checked;
       if (t && t.children) {
-        t.children.forEach((c) => { state.checked[c.id] = inp.checked; });
+        goalKids(t).forEach((c) => { state.checked[c.id] = inp.checked; });
       }
       DATA.subjects.forEach((s) => s.tasks.forEach((parent) => {
         if (!parent.children) return;
         if (parent.children.some((c) => c.id === inp.dataset.id)) {
-          state.checked[parent.id] = parent.children.every((c) => isDone(c.id) || (c.id === inp.dataset.id && inp.checked));
+          state.checked[parent.id] = goalKids(parent).every((c) => isDone(c.id) || (c.id === inp.dataset.id && inp.checked));
         }
       }));
       if (inp.checked) tapCheck();
@@ -555,16 +589,100 @@ function renderJournal() {
   document.getElementById("journal").value = state.journal || "";
 }
 
+function coreOpen(ids) {
+  return ids.filter((id) => !isDone(id)).length;
+}
+
+function renderPiano() {
+  const box = document.getElementById("piano");
+  const fiLeft = coreOpen(CORE.fi);
+  const maLeft = coreOpen(CORE.ma);
+  const shops = SHOPS.map((b) => `
+    <a class="shop" href="${esc(b.href)}" target="_blank" rel="noopener">
+      <strong>${esc(b.title)}</strong>
+      <span class="shop-store">${esc(b.store)}</span>
+      <span class="hint">${esc(b.note)}</span>
+    </a>
+  `).join("");
+  box.innerHTML = `
+    <h1 class="page-title">Piano Sardegna</h1>
+    <p class="blurb">Dal 22 agosto al 1° settembre. Mare e nonni prima; i compiti solo nei buchi. Non entra tutto: qui c’è l’ordine, non la lista infinita.</p>
+    <p class="cal-help">Ogni ebook legale è quasi sempre Kindle o EPUB, non un PDF nudo. Li leggi sul telefono. Dickens è già su Classroom: non comprarlo da altri siti.</p>
+
+    <div class="ask-kicker" style="margin-top:18px">Adesso — scegli la circostanza</div>
+    <div class="slot-grid">
+      <button type="button" class="slot" data-go="zh">
+        <strong>Cuffie · 20–40 min</strong>
+        <span>Mare, macchina, nonni in cucina. Cinese completo: un ascolto o una lettura. Poi, se avanza, i due video di inglese.</span>
+      </button>
+      <button type="button" class="slot" data-go="it">
+        <strong>Letto / ombrellone · 45–90 min</strong>
+        <span>Ordine di lettura: Calvino → Sepúlveda → Dickens (Classroom) → Balzano → Pirandello → Balbi. Un libro alla volta.</span>
+      </button>
+      <button type="button" class="slot" data-go="en">
+        <strong>Cuffie extra · inglese</strong>
+        <span>Performer B2 Unit 6 (pag. 106, 108, 110, 114) e i due video. Dickens: riletto dal PDF Classroom, verifica a settembre.</span>
+      </button>
+      <button type="button" class="slot" data-go="ma">
+        <strong>Tavolo · mate 45–90 min</strong>
+        <span>5–6 dei 30. Serve PDF + quaderno. Non fare mate e fisica nello stesso buco.</span>
+      </button>
+      <button type="button" class="slot" data-go="fi">
+        <strong>Tavolo · fisica 45–90 min</strong>
+        <span>5–6 dei 30 neri. Se un numero è evidenziato nel PDF, sostituiscilo. Relazione Balbi: dopo aver letto, a casa.</span>
+      </button>
+      <button type="button" class="slot" data-go="caratteri">
+        <strong>5 minuti, ogni giorno</strong>
+        <span>2 righe di caratteri. Anche dopo la Sardegna, fino al 12 settembre. Non saltare: è il pezzo più facile da recuperare male.</span>
+      </button>
+    </div>
+
+    <div class="sept-box" style="margin-top:18px">
+      <div class="sept-kicker">Cosa entra in questi 10 giorni</div>
+      <p class="cal-help" style="margin:8px 0 0">Cinese fatto per intero · caratteri ogni giorno · comprare gli ebook oggi · leggere i libri corti · lettorato inglese (pagine + video) · i 30+30 al tavolo se c’è un pomeriggio fermo.</p>
+      <div class="sept-kicker" style="margin-top:14px">Cosa resta per l’1–14 settembre</div>
+      <p class="cal-help" style="margin:8px 0 0">I tre temi di italiano (li scrivi tu, niente AI) · relazione sul Balbi · orale a voce · consegna Classroom del 14/09. Arte: salta in Sardegna.</p>
+    </div>
+
+    <h2 class="page-title" style="font-size:20px;margin-top:22px">Compra oggi (legale)</h2>
+    <p class="cal-help">Kindle o Kobo sul telefono. Se poi vuoi una scheda studio da me, mandami un file senza DRM oppure il testo di pubblico dominio. Non usare siti pirata.</p>
+    <div class="shop-list">${shops}</div>
+    <p class="cal-help">Pirandello anche su <a href="https://it.wikisource.org/wiki/Il_fu_Mattia_Pascal" target="_blank" rel="noopener">Wikisource</a>. Calvino anche su Feltrinelli/Kobo (ISBN 9788835727705). Balzano su Feltrinelli (ISBN 9788858427880).</p>
+
+    <h2 class="page-title" style="font-size:20px;margin-top:22px">I 30 di fisica · ${30 - fiLeft}/30</h2>
+    <p class="cal-help">Misti per argomento. Se nel PDF un numero è evidenziato e tu non hai debito, sostituiscilo con un nero dello stesso tipo. Aperti: ${fiLeft}.</p>
+    <button type="button" class="home-card" data-go="fi">
+      <div class="home-card-top"><strong>Apri Fisica</strong><span class="due">filtro Solo i 30</span></div>
+      <div class="home-meta">1 2 3 6 7 8 9 10 11 12 14 15 16 17 19 21 23 26 27 31 32 33 34 36 38 41 43 45 47 48</div>
+    </button>
+
+    <h2 class="page-title" style="font-size:20px;margin-top:22px">I 30 di matematica · ${30 - maLeft}/30</h2>
+    <p class="cal-help">Solo colonna sinistra / per tutti. 42 e 41: figure nel PDF. Aperti: ${maLeft}.</p>
+    <button type="button" class="home-card" data-go="ma">
+      <div class="home-card-top"><strong>Apri Matematica</strong><span class="due">filtro Solo i 30</span></div>
+      <div class="home-meta">42 · 102a · 103a · 161 162 167 168 · 267 268 270 · 101 · 281 282 284 286 288 · 373 376 · 123 131 · 176 229 292 · 308 310 315 316 · 55 · 16 41</div>
+    </button>
+  `;
+  box.querySelectorAll("[data-go]").forEach((b) => {
+    b.addEventListener("click", () => goTo(b.dataset.go));
+  });
+}
+
 function render() {
   const subPage = isSubjectPage();
   document.getElementById("home-panel").classList.toggle("show", state.page === "home");
+  document.getElementById("piano-panel").classList.toggle("show", state.page === "piano");
   document.getElementById("compiti-panel").classList.toggle("show", subPage);
   document.getElementById("char-panel").classList.toggle("show", state.page === "caratteri");
   document.getElementById("note-panel").classList.toggle("show", state.page === "note");
   document.getElementById("search-wrap").classList.toggle("hidden", !subPage);
+  const show30 = subPage && (state.page === "fi" || state.page === "ma");
+  document.getElementById("core30").classList.toggle("hidden", !show30);
+  document.getElementById("core30").classList.toggle("on", !!state.focus30);
   renderHeaderProgress();
   renderMenu();
   if (state.page === "home") renderHome();
+  if (state.page === "piano") renderPiano();
   if (subPage) renderSubject();
   if (state.page === "caratteri") renderChars();
   if (state.page === "note") renderJournal();
@@ -595,6 +713,11 @@ window.addEventListener("DOMContentLoaded", () => {
     state.showOptional = !state.showOptional;
     save();
     document.getElementById("opt").classList.toggle("on", state.showOptional);
+    render();
+  });
+  document.getElementById("core30").addEventListener("click", () => {
+    state.focus30 = !state.focus30;
+    save();
     render();
   });
   document.getElementById("firma").addEventListener("change", (e) => {
@@ -636,7 +759,11 @@ window.addEventListener("DOMContentLoaded", () => {
     r.readAsText(f);
   });
   if (state.showOptional) document.getElementById("opt").classList.add("on");
-  if (state.page && state.page !== "home" && !isSubjectPage() && state.page !== "caratteri" && state.page !== "note") {
+  if (state.focus30 !== false) {
+    state.focus30 = true;
+    document.getElementById("core30").classList.add("on");
+  }
+  if (state.page && state.page !== "home" && state.page !== "piano" && !isSubjectPage() && state.page !== "caratteri" && state.page !== "note") {
     state.page = "home";
   }
   render();

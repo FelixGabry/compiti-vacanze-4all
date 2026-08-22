@@ -35,6 +35,19 @@ const A = {
   maybeEs: { kind: "maybe", date: "2026-09-14", label: "Possibile orale/verifica a settembre (in chat non è confermato)" },
 };
 
+const CORE = {
+  fi: "1,2,3,6,7,8,9,10,11,12,14,15,16,17,19,21,23,26,27,31,32,33,34,36,38,41,43,45,47,48".split(",").map((n) => "fi-" + n),
+  ma: ["ma-p1-42", "ma-p1-102a", "ma-p1-103a", "ma-161", "ma-162", "ma-167", "ma-168", "ma-267", "ma-268", "ma-270", "ma-101", "ma-281", "ma-282", "ma-284", "ma-286", "ma-288", "ma-373", "ma-376", "ma-123", "ma-131", "ma-176", "ma-229", "ma-292", "ma-308", "ma-310", "ma-315", "ma-316", "ma-55", "ma-16", "ma-41"],
+};
+
+const SHOPS = [
+  { id: "calvino", title: "Calvino — Il sentiero dei nidi di ragno", note: "Kindle sul telefono, da leggere in spiaggia. Scheda studio già pronta.", href: "https://www.amazon.it/sentiero-ragno-Oscar-opere-Calvino-ebook/dp/B008FHSQE2", store: "Amazon Kindle" },
+  { id: "balzano", title: "Balzano — Resto qui", note: "Kindle oppure Feltrinelli/Kobo (EPUB). Circa 9 €.", href: "https://www.amazon.it/dp/B079SD1DKZ", store: "Amazon Kindle" },
+  { id: "pirandello", title: "Pirandello — Il fu Mattia Pascal", note: "È del 1904: pubblico dominio. Gratis e legale su Liber Liber; oppure ebook Mondadori a pochi euro.", href: "https://www.liberliber.it/online/autori/autori-p/luigi-pirandello/il-fu-mattia-pascal/", store: "Liber Liber (gratis, legale)" },
+  { id: "sepulveda", title: "Sepúlveda — Diario de un killer sentimental + Yacaré", note: "In spagnolo, volume Tusquets (ISBN 9788411074100, EPUB). Non prendere la traduzione italiana: il compito è in spagnolo.", href: "https://www.amabook.es/diario-de-un-killer-sentimental-seguido-de-yacare_1", store: "Amabook / Tusquets" },
+  { id: "balbi", title: "Balbi — Cercatori di meraviglia", note: "Rizzoli, ebook circa 8 €. Serve per la relazione di fisica (la scrivi tu dopo aver letto).", href: "https://www.lafeltrinelli.it/cercatori-di-meraviglia-ebook-amedeo-balbi/e/9788858667866", store: "Feltrinelli / Kobo" },
+];
+
 const DATA = {
   className: "4ALL linguistico",
   school: "Liceo Cairoli — Vigevano",

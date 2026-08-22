@@ -522,3 +522,28 @@ textarea.journal {
 .hidden { display: none !important; }
 button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
+
+.slot-grid { display: grid; gap: 10px; margin-top: 10px; }
+.slot {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  padding: 14px 16px;
+  color: inherit;
+}
+.slot strong { display: block; font-size: 16px; margin-bottom: 6px; }
+.slot span { display: block; font-size: 14px; line-height: 1.45; color: var(--muted); }
+.shop-list { display: grid; gap: 10px; margin-top: 10px; }
+.shop {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  text-decoration: none;
+  color: inherit;
+}
+.shop-store { font-size: 12px; font-weight: 700; color: var(--accent); }
+.piano-banner { border-color: #d3e4de; background: #eef5f2; }
