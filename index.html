@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Compiti">
-  <title>Compiti delle vacanze — 4ALL</title>
+  <title>Compiti — 4ALL</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./icon.svg">
@@ -32,13 +32,13 @@
         </div>
       </div>
       <div id="search-wrap" class="hidden">
-        <input class="search" id="q" type="search" placeholder="Cerca in questa materia…" enterkeyhint="search">
+        <input class="search hidden" id="q" type="search" placeholder="">
         <div class="filters">
-          <button class="chip on" data-filter="all" type="button">Tutti</button>
-          <button class="chip" data-filter="todo" type="button">Da fare</button>
-          <button class="chip" data-filter="done" type="button">Fatti</button>
-          <button class="chip" id="opt" type="button">Facoltativi</button>
-          <button class="chip on" id="core30" type="button">Solo i 30</button>
+          <button class="chip on hidden" data-filter="all" type="button">Tutti</button>
+          <button class="chip hidden" data-filter="todo" type="button">Da fare</button>
+          <button class="chip hidden" data-filter="done" type="button">Fatti</button>
+          <button class="chip hidden" id="opt" type="button">Facoltativi</button>
+          <button class="chip on" id="core30" type="button">I 30 che fai tu</button>
         </div>
       </div>
     </header>

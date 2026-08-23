@@ -523,6 +523,59 @@ textarea.journal {
 button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
 
+.lead {
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 8px 0 18px;
+}
+.subject-list { display: grid; gap: 10px; margin-top: 8px; }
+.subject-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 16px;
+  padding: 18px 18px;
+  color: inherit;
+  font: inherit;
+  margin-top: 10px;
+}
+.subject-btn strong { font-size: 18px; font-weight: 650; }
+.subject-btn span { color: var(--muted); font-size: 14px; font-weight: 650; }
+.subject-btn.done { background: var(--ok-bg); border-color: #c5d6c2; }
+
+.quote {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: #f3f6f4;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+}
+.quote-kicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.quote-body {
+  font-size: 15.5px;
+  line-height: 1.5;
+  white-space: normal;
+}
+.task .title {
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+.note { margin-top: 10px; min-height: 42px; opacity: 0.7; }
+
 .slot-grid { display: grid; gap: 10px; margin-top: 10px; }
 .slot {
   text-align: left;

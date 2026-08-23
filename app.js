@@ -208,14 +208,19 @@ function nearestAlert(list) {
   return list.slice().sort((a, b) => (a.date || "9999") < (b.date || "9999") ? -1 : 1)[0];
 }
 
-function reqHtml(id, text, who) {
+function quoteHtml(text, kicker) {
   if (!text) return "";
-  const open = openReqs.has(id) ? " open" : "";
-  const label = who ? "Cosa chiede " + who : "Cosa chiede il prof";
-  return `<details class="req"${open} data-req="${esc(id)}">
-    <summary>${esc(label)}</summary>
-    <div class="req-body">${esc(text).replace(/\n/g, "<br>")}</div>
-  </details>`;
+  return `<div class="quote">
+    <div class="quote-kicker">${esc(kicker || "Come scritto dal prof")}</div>
+    <div class="quote-body">${esc(text).replace(/\n/g, "<br>")}</div>
+  </div>`;
+}
+
+function extraReq(task) {
+  if (!task.req) return "";
+  const first = task.req.split("\n")[0];
+  if (task.title.endsWith(first) && task.req.indexOf("\n") === -1) return "";
+  return quoteHtml(task.req, task.who || "Testo del compito");
 }
 
 function bindReqs(root) {
@@ -300,7 +305,7 @@ function nextUp() {
 }
 
 function pageLabel() {
-  if (state.page === "home") return "Home";
+  if (state.page === "home") return "Materie";
   if (state.page === "piano") return "Piano Sardegna";
   if (state.page === "caratteri") return "Caratteri";
   if (state.page === "note") return "Note";
@@ -321,8 +326,7 @@ function renderMenu() {
   if (!menuOpen) return;
   const char = charCounts();
   const items = [
-    { id: "home", label: "Home", meta: "" },
-    { id: "piano", label: "Piano Sardegna", meta: "10 giorni" },
+    { id: "home", label: "Materie", meta: "" },
     ...DATA.subjects.map((s) => {
       const st = subjectStats(s);
       const hot = !!(s.alerts && s.alerts.length) && !(st.total && st.done === st.total);
@@ -379,68 +383,25 @@ function septemberWatch() {
 
 function renderHome() {
   const box = document.getElementById("home");
-  const nxt = nextUp();
   const char = charCounts();
-  const watch = septemberWatch();
   const cards = DATA.subjects.map((s) => {
     const st = subjectStats(s);
-    const pct = Math.round(st.pct * 100);
     const all = st.total && st.done === st.total;
-    const hot = !all && s.alerts && s.alerts.length;
-    const top = nearestAlert(s.alerts);
     return `
-      <button type="button" class="home-card${all ? " done" : ""}${hot ? " hot" : ""}" data-go="${s.id}">
-        <div class="home-card-top">
-          <strong>${esc(s.name)}</strong>
-          <span class="due${hot ? " hot" : ""}">${esc(s.due)}</span>
-        </div>
-        ${hot && top ? `<div class="alert-line">${esc(KIND_LABEL[top.kind] || "Scadenza")} · ${esc(top.label)}${esc(whenText(top.date))}</div>` : ""}
-        <div class="bar"><i style="width:${pct}%"></i></div>
-        <div class="home-meta">${st.done} / ${st.total}${all ? " · fatto" : ""}</div>
+      <button type="button" class="subject-btn${all ? " done" : ""}" data-go="${s.id}">
+        <strong>${esc(s.name)}</strong>
+        <span>${st.done}/${st.total}</span>
       </button>
     `;
   }).join("");
-  const charPct = char.total ? Math.round((char.done / char.total) * 100) : 0;
   const charDone = char.total && char.done === char.total;
-  const watchHtml = watch.length ? `
-    <div class="sept-box">
-      <div class="sept-kicker">Settembre — scadenze e prove</div>
-      ${watch.map((w) => `
-        <button type="button" class="sept-row" data-go="${w.go}">
-          <span class="alert-kind">${esc(KIND_LABEL[w.kind] || "Scadenza")}</span>
-          <span><strong>${esc(w.name)}</strong> — ${esc(w.label)}${esc(whenText(w.date))}</span>
-        </button>
-      `).join("")}
-    </div>` : "";
   box.innerHTML = `
-    <button type="button" class="next-card piano-banner" data-go="piano">
-      <div class="ask-kicker">22 agosto — 1 settembre</div>
-      <div class="next-title">Piano Sardegna</div>
-      <div class="hint">Scegli al volo: cuffie, letto o tavolo. Cinese completo · 30 esercizi per materia · ebook legali.</div>
-    </button>
-    ${watchHtml}
-    ${nxt ? `
-      <button type="button" class="next-card" data-go="${nxt.subject.id}">
-        <div class="ask-kicker">Prossimo punto</div>
-        <div class="next-title">${esc(nxt.task.title)}</div>
-        <div class="hint">${esc(nxt.subject.name)}</div>
-      </button>
-    ` : `<p class="celebrate">Tutto spuntato.</p>`}
-    <div class="home-grid">${cards}</div>
-    <button type="button" class="home-card${charDone ? " done" : " hot"}" data-go="caratteri">
-      <div class="home-card-top">
-        <strong>Caratteri</strong>
-        <span class="due${charDone ? "" : " hot"}">12 set</span>
-      </div>
-      ${charDone ? "" : `<div class="alert-line">Consegna · 2 righe al giorno fino al 12 settembre${esc(whenText(CHAR_END))}</div>`}
-      <div class="bar"><i style="width:${charPct}%"></i></div>
-      <div class="home-meta">${char.done} / ${char.total} giorni${charDone ? " · fatto" : ""}</div>
-    </button>
-    <button type="button" class="home-card" data-go="note">
-      <div class="home-card-top">
-        <strong>Note</strong>
-      </div>
-      <div class="home-meta">${state.journal ? "C’è già qualcosa nel diario" : "Diario e backup"}</div>
+    <h1 class="page-title">Che materia fai adesso?</h1>
+    <p class="lead">Tocca una materia. Trovi i compiti scritti come su Classroom, non riassunti da me.</p>
+    <div class="subject-list">${cards}</div>
+    <button type="button" class="subject-btn${charDone ? " done" : ""}" data-go="caratteri">
+      <strong>Caratteri</strong>
+      <span>${char.done}/${char.total}</span>
     </button>
   `;
   box.querySelectorAll("[data-go]").forEach((b) => {
@@ -466,7 +427,7 @@ function renderSubject() {
       <span class="due${sub.alerts && sub.alerts.length ? " hot" : ""}">${esc(sub.due)}</span>
     </div>
     ${sub.teacher ? `<p class="teacher">${esc(sub.teacher)}</p>` : ""}
-    <p class="blurb">${esc(sub.blurb)}</p>
+    ${quoteHtml(sub.ask, "Su Classroom")}
     ${alertHtml(sub.alerts)}
     <div class="bar page-bar"><i style="width:${Math.round(st.pct * 100)}%"></i></div>
     <p class="count">${st.done} / ${st.total}</p>
@@ -474,12 +435,6 @@ function renderSubject() {
     ${filesHtml(sub.files)}
   `;
   box.appendChild(head);
-  if (sub.ask) {
-    const ask = document.createElement("details");
-    ask.className = "req";
-    ask.innerHTML = `<summary>Richiesta complessiva</summary><div class="req-body">${esc(sub.ask).replace(/\n/g, "<br>")}</div>`;
-    box.appendChild(ask);
-  }
   const list = document.createElement("div");
   list.className = "task-list";
   tasks.forEach((task) => list.appendChild(renderTask(task, sub)));
@@ -504,7 +459,7 @@ function renderTask(task, sub) {
             <span>${esc(c.title)}</span>
           </label>
           ${alertHtml(c.alerts || task.alerts)}
-          ${reqHtml(c.id, c.req, c.who || task.who || sub.who)}
+          ${extraReq(c)}
           ${filesHtml(c.files || task.files)}
         </div>`).join("")}</div>`
     : "";
@@ -516,7 +471,7 @@ function renderTask(task, sub) {
         <div class="title">${esc(task.title)}${task.optional ? '<span class="badge">facoltativo</span>' : ""}${prog ? " · " + prog : ""}</div>
         ${alertHtml(task.alerts)}
         ${task.hint ? `<div class="hint">${esc(task.hint)}</div>` : ""}
-        ${reqHtml(task.id, task.req, task.who || sub.who)}
+        ${extraReq(task)}
         ${filesHtml(task.files)}
         ${task.href ? `<a class="link" href="${esc(task.href)}" target="_blank" rel="noopener">Apri link</a>` : ""}
         ${kids}
@@ -675,8 +630,9 @@ function render() {
   document.getElementById("compiti-panel").classList.toggle("show", subPage);
   document.getElementById("char-panel").classList.toggle("show", state.page === "caratteri");
   document.getElementById("note-panel").classList.toggle("show", state.page === "note");
-  document.getElementById("search-wrap").classList.toggle("hidden", !subPage);
   const show30 = subPage && (state.page === "fi" || state.page === "ma");
+  document.getElementById("search-wrap").classList.toggle("hidden", !show30);
+  document.getElementById("progress-row").classList.toggle("hidden", true);
   document.getElementById("core30").classList.toggle("hidden", !show30);
   document.getElementById("core30").classList.toggle("on", !!state.focus30);
   renderHeaderProgress();
