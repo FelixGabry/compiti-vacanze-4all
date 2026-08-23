@@ -1,4 +1,4 @@
-const CACHE = "compiti-4all-v8";
+const CACHE = "compiti-4all-v9";
 const FILES = ["./index.html", "./styles.css", "./app.js", "./data.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {

@@ -581,11 +581,11 @@ const DATA = {
       name: "Cinese",
       teacher: "Di Vincenzo + Zu",
       who: "i prof",
-      blurb: "4 testi × 3–4 volte, in cinese. Zu: dettato + 2 righe/giorno fino al 12 settembre.",
+      blurb: "4 testi × 3–4 volte, in cinese. Zu: testo sulle vacanze + dettato + 2 righe/giorno fino al 12 settembre.",
       due: "12 set (caratteri)",
       dueDate: "2026-09-12",
       alerts: [A.due12, A.oralZh, A.dictZu],
-      ask: "Due prof, due lavori. Messaggio Di Vincenzo da far girare dai rappresentanti; commentare «ricevuto».\n\nDI VINCENZO (testo integrale):\n«Vi invio due podcast e due letture. I podcast hanno anche la versione scritta che potete consultare, mentre le letture hanno pop up su ogni carattere che mostra la traduzione delle parole, potete scoprire il pinyin e la traduzione in inglese.\nL’obiettivo non è sapere di cosa parlano questi contenuti, ma ascoltare e leggere in cinese per migliorare il vostro livello, quindi fatelo con questa consapevolezza. Al rientro dalle vacanze vi chiederò di riassumere in cinese i contenuti sia dei podcast che dei testi e vi chiederò delle opinioni al riguardo (mi baserò sulle domande fatte dal conduttore alla fine delle puntate per quanto riguarda i podcast). Quindi preparatevi sulla parte in cinese, facendo glossari, riassunti e provando a ripetere i contenuti (usando il lessico che avete già e aggiungendo lessico nuovo che avrete imparato dalla lettura e dall’ascolto di questi testi). Per raggiungere l’obiettivo sarà necessario ascoltare e leggere almeno 3-4 volte i podcast e i testi.\nOltre a ciò, aprire il file del programma svolto e ripassare tutti i caratteri studiati lo scorso anno (Unità 7 vol. 2 e le letture del vol. 3). La prof. Zu farà il dettato al rientro.»\n\nZU: 2 righe di caratteri al giorno dall’ultima firma sul quaderno fino al 12 settembre (compreso il recupero da marzo/aprile, non solo da oggi).",
+      ask: "Due prof, due lavori. Messaggio Di Vincenzo da far girare dai rappresentanti; commentare «ricevuto».\n\nDI VINCENZO (testo integrale):\n«Vi invio due podcast e due letture. I podcast hanno anche la versione scritta che potete consultare, mentre le letture hanno pop up su ogni carattere che mostra la traduzione delle parole, potete scoprire il pinyin e la traduzione in inglese.\nL’obiettivo non è sapere di cosa parlano questi contenuti, ma ascoltare e leggere in cinese per migliorare il vostro livello, quindi fatelo con questa consapevolezza. Al rientro dalle vacanze vi chiederò di riassumere in cinese i contenuti sia dei podcast che dei testi e vi chiederò delle opinioni al riguardo (mi baserò sulle domande fatte dal conduttore alla fine delle puntate per quanto riguarda i podcast). Quindi preparatevi sulla parte in cinese, facendo glossari, riassunti e provando a ripetere i contenuti (usando il lessico che avete già e aggiungendo lessico nuovo che avrete imparato dalla lettura e dall’ascolto di questi testi). Per raggiungere l’obiettivo sarà necessario ascoltare e leggere almeno 3-4 volte i podcast e i testi.\nOltre a ciò, aprire il file del programma svolto e ripassare tutti i caratteri studiati lo scorso anno (Unità 7 vol. 2 e le letture del vol. 3). La prof. Zu farà il dettato al rientro.»\n\nZU: fare il testo sulle vacanze in cinese; 2 righe di caratteri al giorno dall’ultima firma sul quaderno fino al 12 settembre (compreso il recupero da marzo/aprile, non solo da oggi); dettato al rientro.",
       tasks: [
         {
           id: "zh-mianzi",
@@ -646,6 +646,13 @@ const DATA = {
           who: "Zu (indicato da Di Vincenzo)",
           alerts: [A.dictZu],
           req: "Stesso ripasso: tutti i caratteri delle letture del volume 3. Servono per il dettato della Zu.",
+        },
+        {
+          id: "zh-vacanze",
+          title: "Fare il testo sulle vacanze in cinese.",
+          who: "la Zu",
+          alerts: [A.due12],
+          req: "Compito della Zu: scrivere un testo in cinese sulle vacanze.\n\nLo scrivi tu, in caratteri, con il lessico che sai (anche quello nuovo dei testi estivi). Non è da far scrivere all’AI. Tienilo pronto per il rientro, insieme alle 2 righe al giorno e al dettato.",
         },
         {
           id: "zh-firma",
