@@ -1,0 +1,15 @@
+name = "compiti-4all"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+workers_dev = true
+
+# Dal cartella sito/:
+#   npx wrangler login
+#   npx wrangler kv namespace create STATE
+#   (incolla l'id sotto)
+#   npx wrangler secret put PIN
+#   npx wrangler deploy
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "4e0f1dee5066456f8569d315c660223b"

@@ -15,7 +15,10 @@ function items(prefix, rows) {
 const F = {
   itLetture: { name: "Letture estive quarta.pdf", href: "./file/it-letture-estive.pdf", from: "prof" },
   itTracce: { name: "P000_ORD25 — tracce maturità.pdf", href: "./file/it-tracce-maturita.pdf", from: "prof" },
-  itCalvino: { name: "Scheda Calvino.pdf", href: "./file/it-calvino-scheda.pdf", from: "ours" },
+  itPavese1: { name: "Pavese — Blocco 1 (cap. I–VI).pdf", href: "./file/it-pavese-blocco1.pdf", from: "ours" },
+  itPavese2: { name: "Pavese — Blocco 2.pdf", href: "./file/it-pavese-blocco2.pdf", from: "ours" },
+  itPavese3: { name: "Pavese — Blocco 3.pdf", href: "./file/it-pavese-blocco3.pdf", from: "ours" },
+  itPavese4: { name: "Pavese — Blocco 4 (finale).pdf", href: "./file/it-pavese-blocco4.pdf", from: "ours" },
   enModulo: { name: "Modulo compiti estivi.docx", href: "./file/en-modulo.docx", from: "prof" },
   enScheda: { name: "Scheda Dickens.pdf", href: "./file/en-dickens-scheda.pdf", from: "ours" },
   enProg: { name: "Programma svolto Manfredda.pdf", href: "./file/en-programma.pdf", from: "prof" },
@@ -42,8 +45,8 @@ const CORE = {
 };
 
 const SHOPS = [
-  { id: "calvino", title: "Calvino — Il sentiero dei nidi di ragno", note: "Kindle sul telefono, da leggere in spiaggia. Scheda studio già pronta.", href: "https://www.amazon.it/sentiero-ragno-Oscar-opere-Calvino-ebook/dp/B008FHSQE2", store: "Amazon Kindle" },
-  { id: "balzano", title: "Balzano — Resto qui", note: "Kindle oppure Feltrinelli/Kobo (EPUB). Circa 9 €.", href: "https://www.amazon.it/dp/B079SD1DKZ", store: "Amazon Kindle" },
+  { id: "pavese", title: "Pavese — La luna e i falò", note: "Pubblico dominio in Italia. Gratis e legale su Liber Liber (anche Wikisource).", href: "https://liberliber.it/autori/autori-p/cesare-pavese/la-luna-e-i-falo/", store: "Liber Liber (gratis, legale)" },
+  { id: "orwell", title: "Orwell — 1984", note: "Traduzione italiana: ebook legale (Mondadori/Feltrinelli). Originale inglese: pubblico dominio in UE, da libreria legale o edizione PD.", href: "https://www.lafeltrinelli.it/1984-libro-george-orwell/e/9788804668237", store: "Feltrinelli / Mondadori" },
   { id: "pirandello", title: "Pirandello — Il fu Mattia Pascal", note: "È del 1904: pubblico dominio. Gratis e legale su Liber Liber; oppure ebook Mondadori a pochi euro.", href: "https://www.liberliber.it/online/autori/autori-p/luigi-pirandello/il-fu-mattia-pascal/", store: "Liber Liber (gratis, legale)" },
   { id: "sepulveda", title: "Sepúlveda — Diario de un killer sentimental + Yacaré", note: "In spagnolo, volume Tusquets (ISBN 9788411074100, EPUB). Non prendere la traduzione italiana: il compito è in spagnolo.", href: "https://www.amabook.es/diario-de-un-killer-sentimental-seguido-de-yacare_1", store: "Amabook / Tusquets" },
   { id: "balbi", title: "Balbi — Cercatori di meraviglia", note: "Rizzoli, ebook circa 8 €. Serve per la relazione di fisica (la scrivi tu dopo aver letto).", href: "https://www.lafeltrinelli.it/cercatori-di-meraviglia-ebook-amedeo-balbi/e/9788858667866", store: "Feltrinelli / Kobo" },
@@ -74,25 +77,26 @@ const DATA = {
           req: "Testo Classroom: «Leggete almeno tre libri tra quelli indicati.»\n\nAllegato: Letture estive quarta.pptx.pdf. I tre scelti dalla lista ufficiale:",
           children: [
             {
-              id: "it-calvino",
-              title: "Italo Calvino — Il sentiero dei nidi di ragno",
-              files: [F.itLetture, F.itCalvino],
+              id: "it-pavese",
+              title: "Cesare Pavese — La luna e i falò",
+              done: true,
+              files: [F.itLetture, F.itPavese1, F.itPavese2, F.itPavese3, F.itPavese4],
               alerts: [A.oralIt],
-              req: "Dalla lista della prof. Va letto per intero. Non c’è scheda da consegnare.",
+              req: "Dalla lista della prof. Scelta definitiva (27 agosto 2026). Letto. Schede da stampare (4 blocchi) sotto «Da stampare». Gratis legale: Liber Liber.",
             },
             {
-              id: "it-balzano",
-              title: "Marco Balzano — Resto qui",
+              id: "it-orwell",
+              title: "George Orwell — 1984",
               files: [F.itLetture],
               alerts: [A.oralIt],
-              req: "Dalla lista della prof. Va letto per intero. Non c’è scheda da consegnare.",
+              req: "Dalla lista della prof. Scelta definitiva (27 agosto 2026). Va letto per intero. Non c’è scheda da consegnare. Traduzione italiana da comprare in ebook legale; originale inglese in pubblico dominio in UE.",
             },
             {
               id: "it-pirandello",
               title: "Luigi Pirandello — Il fu Mattia Pascal",
               files: [F.itLetture],
               alerts: [A.oralIt],
-              req: "Dalla lista della prof. Va letto per intero. Non c’è scheda da consegnare.",
+              req: "Dalla lista della prof. Va letto per intero. Non c’è scheda da consegnare. Gratis legale: Liber Liber / Wikisource.",
             },
           ],
         },

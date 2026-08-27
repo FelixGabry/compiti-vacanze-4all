@@ -1,8 +1,11 @@
 const STORE = "compiti-4all-2026-v1";
+const PIN_KEY = "compiti-4all-pin";
+const API_KEY = "compiti-4all-api";
+const DEFAULT_API = "https://compiti-4all.gatto-compiti.workers.dev";
 const CHAR_END = "2026-09-12";
 
 function empty() {
-  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false, focus30: true, page: "home" };
+  return { checked: {}, notes: {}, journal: "", firma: "", chars: {}, showOptional: false, focus30: true, page: "home", updatedAt: 0 };
 }
 
 function load() {
@@ -22,9 +25,127 @@ function load() {
 }
 
 const state = load();
+let pushTimer = 0;
 
-function save() {
+function getPin() {
+  return (localStorage.getItem(PIN_KEY) || "").trim();
+}
+
+function getApi() {
+  return (localStorage.getItem(API_KEY) || DEFAULT_API).replace(/\/+$/, "");
+}
+
+function authHeaders() {
+  const pin = getPin();
+  return pin ? { Authorization: "Bearer " + pin, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+}
+
+function hasLocalWork() {
+  return Object.keys(state.checked || {}).length > 0
+    || Object.keys(state.chars || {}).length > 0
+    || Object.keys(state.notes || {}).length > 0
+    || !!(state.journal && state.journal.trim())
+    || !!state.firma;
+}
+
+function applyRemote(remote) {
+  const page = state.page;
+  const next = {
+    ...empty(),
+    ...remote,
+    checked: remote.checked || {},
+    notes: remote.notes || {},
+    chars: remote.chars || {},
+    page,
+  };
+  Object.keys(state).forEach((k) => { delete state[k]; });
+  Object.assign(state, next);
+}
+
+function save(opts) {
+  const skipStamp = opts && opts.skipStamp;
+  const skipPush = opts && opts.skipPush;
+  if (!skipStamp) state.updatedAt = Date.now();
   localStorage.setItem(STORE, JSON.stringify(state));
+  if (!skipPush) schedulePush();
+}
+
+function schedulePush() {
+  if (!getPin() || !getApi()) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushState, 500);
+}
+
+function setSyncMsg(text, kind) {
+  const el = document.getElementById("sync-msg");
+  if (!el) return;
+  el.textContent = text || "";
+  el.className = "sync-msg" + (kind ? " " + kind : "");
+}
+
+async function pullState() {
+  if (!getPin() || !getApi()) {
+    setSyncMsg("Inserisci PIN e indirizzo del server (una volta).");
+    return;
+  }
+  try {
+    const res = await fetch(getApi() + "/state", { headers: authHeaders() });
+    if (res.status === 401) {
+      setSyncMsg("PIN non accettato dal server.", "err");
+      return;
+    }
+    if (res.status === 204) {
+      if (hasLocalWork()) {
+        await pushState();
+        setSyncMsg("Prima copia caricata sul server.", "ok");
+      } else {
+        setSyncMsg("Server vuoto. Le prossime spunte si salveranno lì.", "ok");
+      }
+      return;
+    }
+    if (!res.ok) {
+      setSyncMsg("Server non raggiungibile (" + res.status + "). Restano le spunte di questo telefono.", "err");
+      return;
+    }
+    const remote = await res.json();
+    const remoteTs = Number(remote && remote.updatedAt) || 0;
+    const localTs = Number(state.updatedAt) || 0;
+    if (remoteTs > localTs) {
+      applyRemote(remote);
+      save({ skipStamp: true, skipPush: true });
+      render();
+      setSyncMsg("Allineato al server.", "ok");
+    } else if (localTs > remoteTs && hasLocalWork()) {
+      await pushState();
+      setSyncMsg("Questo telefono era più avanti: inviato al server.", "ok");
+    } else {
+      setSyncMsg("Sincronizzato.", "ok");
+    }
+  } catch {
+    setSyncMsg("Niente rete. Le spunte restano su questo telefono.", "err");
+  }
+}
+
+async function pushState() {
+  if (!getPin() || !getApi()) return;
+  try {
+    const res = await fetch(getApi() + "/state", {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(state),
+    });
+    if (res.status === 401) {
+      setSyncMsg("PIN non accettato dal server.", "err");
+      return;
+    }
+    if (!res.ok) {
+      setSyncMsg("Salvataggio sul server non riuscito.", "err");
+      return;
+    }
+    setSyncMsg("Salvato sul server.", "ok");
+  } catch {
+    setSyncMsg("Offline: salvato solo su questo telefono.", "err");
+  }
 }
 
 function walkTasks(fn) {
@@ -572,7 +693,7 @@ function renderPiano() {
       </button>
       <button type="button" class="slot" data-go="it">
         <strong>Letto / ombrellone · 45–90 min</strong>
-        <span>Ordine di lettura: Calvino → Sepúlveda → Dickens (Classroom) → Balzano → Pirandello → Balbi. Un libro alla volta.</span>
+        <span>Ordine di lettura: Pavese → Sepúlveda → Dickens (Classroom) → Orwell → Pirandello → Balbi. Un libro alla volta.</span>
       </button>
       <button type="button" class="slot" data-go="en">
         <strong>Cuffie extra · inglese</strong>
@@ -602,7 +723,7 @@ function renderPiano() {
     <h2 class="page-title" style="font-size:20px;margin-top:22px">Compra oggi (legale)</h2>
     <p class="cal-help">Kindle o Kobo sul telefono. Se poi vuoi una scheda studio da me, mandami un file senza DRM oppure il testo di pubblico dominio. Non usare siti pirata.</p>
     <div class="shop-list">${shops}</div>
-    <p class="cal-help">Pirandello anche su <a href="https://it.wikisource.org/wiki/Il_fu_Mattia_Pascal" target="_blank" rel="noopener">Wikisource</a>. Calvino anche su Feltrinelli/Kobo (ISBN 9788835727705). Balzano su Feltrinelli (ISBN 9788858427880).</p>
+    <p class="cal-help">Pavese anche su <a href="https://liberliber.it/autori/autori-p/cesare-pavese/la-luna-e-i-falo/" target="_blank" rel="noopener">Liber Liber</a> e <a href="https://it.wikisource.org/wiki/La_luna_e_i_fal%C3%B2" target="_blank" rel="noopener">Wikisource</a>. Pirandello su <a href="https://it.wikisource.org/wiki/Il_fu_Mattia_Pascal" target="_blank" rel="noopener">Wikisource</a>. <em>1984</em>: traduzione italiana in libreria (niente PDF pirata).</p>
 
     <h2 class="page-title" style="font-size:20px;margin-top:22px">I 30 di fisica · ${30 - fiLeft}/30</h2>
     <p class="cal-help">Misti per argomento. Se nel PDF un numero è evidenziato e tu non hai debito, sostituiscilo con un nero dello stesso tipo. Aperti: ${fiLeft}.</p>
@@ -697,6 +818,20 @@ window.addEventListener("DOMContentLoaded", () => {
     a.download = "compiti-backup.json";
     a.click();
   });
+  document.getElementById("sync-pin").value = getPin();
+  document.getElementById("sync-api").value = getApi();
+  document.getElementById("sync-save").addEventListener("click", async () => {
+    const pin = document.getElementById("sync-pin").value.trim();
+    const api = document.getElementById("sync-api").value.trim().replace(/\/+$/, "");
+    if (!pin || !api) {
+      setSyncMsg("Servono PIN e indirizzo del server.", "err");
+      return;
+    }
+    localStorage.setItem(PIN_KEY, pin);
+    localStorage.setItem(API_KEY, api);
+    setSyncMsg("Controllo il server…");
+    await pullState();
+  });
   document.getElementById("restore").addEventListener("change", (e) => {
     const f = e.target.files[0];
     if (!f) return;
@@ -723,6 +858,13 @@ window.addEventListener("DOMContentLoaded", () => {
     state.page = "home";
   }
   render();
+  pullState();
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") pullState();
+  });
+  window.addEventListener("online", () => {
+    pullState();
+  });
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     navigator.serviceWorker.register("./sw.js");
   }

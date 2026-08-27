@@ -73,7 +73,17 @@
 
     <div id="note-panel" class="panel">
       <h1 class="page-title">Note</h1>
-      <p class="cal-help">Diario libero: dove sei arrivato, cosa manca, dubbi. Si salva da solo su questo telefono.</p>
+      <div class="sync-box">
+        <h2 class="sync-title">Sincronizza</h2>
+        <p class="cal-help" style="margin-top:0">Stesso PIN su telefono e PC. Lo metti una volta su ciascun dispositivo. Senza PIN vedi la lista ma non sovrascrivi i progressi sul server.</p>
+        <label class="field-label" for="sync-pin">PIN</label>
+        <input id="sync-pin" class="field" type="password" autocomplete="off">
+        <label class="field-label" for="sync-api">Indirizzo server</label>
+        <input id="sync-api" class="field" type="url" placeholder="https://compiti-4all.xxxx.workers.dev" spellcheck="false">
+        <button class="btn" id="sync-save" type="button">Salva e sincronizza</button>
+        <p class="sync-msg" id="sync-msg"></p>
+      </div>
+      <p class="cal-help">Diario libero: dove sei arrivato, cosa manca, dubbi.</p>
       <textarea class="journal" id="journal" placeholder="Es. Oggi letto 40 pagine di Pirandello. Domani 面子 in cuffia…"></textarea>
       <div class="btn-row">
         <button class="btn" id="copy" type="button">Copia backup</button>
@@ -82,8 +92,8 @@
         <input id="restore" type="file" accept="application/json" hidden>
       </div>
       <p class="cal-help">
-        Le spunte stanno in questo browser. Se cambi telefono: <strong>Copia backup</strong> e incollalo da qualche parte.
-        Poi sull’altro telefono usa Ripristina. Per usarlo offline: Safari/Chrome → Aggiungi a Home.
+        Con PIN e server attivo le spunte, i caratteri e le note stanno sul cloud. Resta comunque un backup JSON se vuoi.
+        Offline: Safari/Chrome → Aggiungi a Home.
       </p>
     </div>
   </div>

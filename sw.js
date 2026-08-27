@@ -1,4 +1,4 @@
-const CACHE = "compiti-4all-v9";
+const CACHE = "compiti-4all-v12";
 const FILES = ["./index.html", "./styles.css", "./app.js", "./data.js", "./manifest.webmanifest", "./icon.svg"];
 
 self.addEventListener("install", (e) => {
@@ -15,6 +15,8 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
+  const url = new URL(e.request.url);
+  if (url.origin !== self.location.origin) return;
   e.respondWith(
     caches.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
       if (res && res.ok) {

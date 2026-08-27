@@ -496,6 +496,36 @@ input[type="date"] {
 .day .w { font-size: 9px; color: var(--muted); text-transform: uppercase; }
 .stats { margin-top: 14px; font-size: 15px; color: var(--muted); }
 
+.sync-box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 8px 0 18px;
+}
+.sync-title { font-size: 17px; margin: 0 0 8px; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 10px 0 6px;
+}
+.field {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  padding: 12px 14px;
+  font: 16px inherit;
+}
+.sync-box .btn { margin-top: 12px; width: 100%; }
+.sync-msg { font-size: 14px; color: var(--muted); margin: 10px 0 0; min-height: 1.3em; }
+.sync-msg.ok { color: var(--ok); }
+.sync-msg.err { color: var(--accent-2); }
+
 textarea.journal {
   width: 100%;
   min-height: 200px;
