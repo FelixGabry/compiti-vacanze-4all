@@ -19,6 +19,10 @@ const F = {
   itPavese2: { name: "Pavese — Blocco 2.pdf", href: "./file/it-pavese-blocco2.pdf", from: "ours" },
   itPavese3: { name: "Pavese — Blocco 3.pdf", href: "./file/it-pavese-blocco3.pdf", from: "ours" },
   itPavese4: { name: "Pavese — Blocco 4 (finale).pdf", href: "./file/it-pavese-blocco4.pdf", from: "ours" },
+  itOrwell1: { name: "Orwell 1984 — Blocco 1.pdf", href: "./file/it-orwell-blocco1.pdf", from: "ours" },
+  itOrwell2: { name: "Orwell 1984 — Blocco 2.pdf", href: "./file/it-orwell-blocco2.pdf", from: "ours" },
+  itOrwell3: { name: "Orwell 1984 — Blocco 3.pdf", href: "./file/it-orwell-blocco3.pdf", from: "ours" },
+  itOrwell4: { name: "Orwell 1984 — Blocco 4.pdf", href: "./file/it-orwell-blocco4.pdf", from: "ours" },
   enModulo: { name: "Modulo compiti estivi.docx", href: "./file/en-modulo.docx", from: "prof" },
   enScheda: { name: "Scheda Dickens.pdf", href: "./file/en-dickens-scheda.pdf", from: "ours" },
   enProg: { name: "Programma svolto Manfredda.pdf", href: "./file/en-programma.pdf", from: "prof" },
@@ -87,9 +91,10 @@ const DATA = {
             {
               id: "it-orwell",
               title: "George Orwell — 1984",
-              files: [F.itLetture],
+              done: true,
+              files: [F.itLetture, F.itOrwell1, F.itOrwell2, F.itOrwell3, F.itOrwell4],
               alerts: [A.oralIt],
-              req: "Dalla lista della prof. Scelta definitiva (27 agosto 2026). Va letto per intero. Non c’è scheda da consegnare. Traduzione italiana da comprare in ebook legale; originale inglese in pubblico dominio in UE.",
+              req: "Dalla lista della prof. Scelta definitiva (27 agosto 2026). Letto. Schede da stampare (4 blocchi) sotto «Da stampare».",
             },
             {
               id: "it-pirandello",
