@@ -202,6 +202,7 @@ const DATA = {
         {
           id: "en-106",
           title: "Performer B2 Unit 6 «Save the Earth» — pagina 106, esercizi 1, 2, 3, 4 e 5.",
+          done: true,
           who: "il lettorato",
           alerts: [A.school],
           req: "SUMMER HOMEWORK (LETTORATO), 100 punti. Unit 6 «Save the Earth», coursebook Performer B2.\nPagina 106: esercizi 1, 2, 3, 4 e 5. Da consegnare su Classroom (insieme al resto del lettorato) per l’inizio della scuola.",
@@ -209,6 +210,7 @@ const DATA = {
         {
           id: "en-108",
           title: "Performer B2 Unit 6 — pagina 108, esercizio 1.",
+          done: true,
           who: "il lettorato",
           alerts: [A.school],
           req: "Stesso compito lettorato (100 punti). Pagina 108: solo l’esercizio 1.",
@@ -216,6 +218,7 @@ const DATA = {
         {
           id: "en-110",
           title: "Performer B2 Unit 6 — pagina 110, esercizi 1, 2, 3 e 4.",
+          done: true,
           who: "il lettorato",
           alerts: [A.school],
           req: "Stesso compito lettorato (100 punti). Pagina 110: esercizi 1, 2, 3 e 4.",
@@ -223,6 +226,7 @@ const DATA = {
         {
           id: "en-114",
           title: "Active Citizenship LAB — pagina 114, esercizi 3 e 4.",
+          done: true,
           who: "il lettorato",
           alerts: [A.school],
           req: "Active Citizenship LAB, stesso compito lettorato (100 punti). Pagina 114: esercizi 3 e 4.",
@@ -230,6 +234,7 @@ const DATA = {
         {
           id: "en-v1",
           title: "Video: Why I live a zero waste life — rispondi alle domande.",
+          done: true,
           who: "il lettorato",
           href: "https://www.youtube.com/watch?v=pF72px2R3Hg",
           alerts: [A.school],
@@ -238,6 +243,7 @@ const DATA = {
         {
           id: "en-v2",
           title: "Video: The Simple Solution to Fast Fashion — rispondi alle domande.",
+          done: true,
           who: "il lettorato",
           href: "https://www.youtube.com/watch?v=Bh8dnw67rE0",
           alerts: [A.school],
@@ -412,8 +418,9 @@ const DATA = {
         {
           id: "fi-balbi",
           title: "Leggere Cercatori di meraviglia (Amedeo Balbi).",
+          done: true,
           alerts: [A.due14],
-          req: "Post Classroom del 5 giugno: «il libro che vorrei proporre».\n\nAmedeo Balbi, Cercatori di meraviglia. Storie di grandi scienziati curiosi del mondo (Rizzoli, 2021, 252 pp.). Storia della scienza attraverso la curiosità (Galileo, Faraday, Becquerel, Cavendish…). Va letto. La relazione è il punto successivo.",
+          req: "Post Classroom del 5 giugno: «il libro che vorrei proporre».\n\nAmedeo Balbi, Cercatori di meraviglia. Storie di grandi scienziati curiosi del mondo (Rizzoli, 2021, 252 pp.). Storia della scienza attraverso la curiosità (Galileo, Faraday, Becquerel, Cavendish…). Letto. Resta la piccola relazione.",
         },
         {
           id: "fi-relazione",
